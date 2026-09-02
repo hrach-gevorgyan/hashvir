@@ -46,6 +46,8 @@ fun NumberGlyph(count: Int, glyphHeight: Dp, modifier: Modifier = Modifier) {
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
             fontSize = glyphSize,
+            lineHeight = glyphSize * 1.05f,
+            maxLines = 1,
             textAlign = TextAlign.Center,
         )
         Text(
@@ -54,6 +56,9 @@ fun NumberGlyph(count: Int, glyphHeight: Dp, modifier: Modifier = Modifier) {
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
             fontSize = wordSize,
+            lineHeight = wordSize * 1.4f,
+            maxLines = 1,
+            softWrap = false,
             textAlign = TextAlign.Center,
         )
     }

@@ -11,10 +11,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -91,6 +94,7 @@ fun RecognitionScreen(
         modifier
             .fillMaxSize()
             .background(round.background.color)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val density = LocalDensity.current
         val screenHeight = maxHeight
@@ -99,7 +103,7 @@ fun RecognitionScreen(
         val cardHeight = minOf(cardWidth, (screenHeight * 0.66f - gap) / 2)
         val shakePx = with(density) { SHAKE_DP.dp.toPx() }
 
-        Scenery(seed = round.answer, tint = Color(0xFF44607A))
+        Scenery(seed = round.answer)
 
         Column(
             Modifier
@@ -123,7 +127,7 @@ fun RecognitionScreen(
                             choice = choice,
                             correct = choice == round.answer,
                             solved = solvedAt != null,
-                            glyphHeight = cardHeight * 0.62f,
+                            glyphHeight = cardHeight * 0.52f,
                             shakeDistance = shakePx,
                             onCorrect = { solvedAt = centre },
                             ruledOut = choice in ruledOut,
@@ -193,7 +197,7 @@ private fun ChoiceCard(
             .offset { IntOffset(shake.value.roundToInt(), 0) }
             .scale(pop.value)
             .clip(RoundedCornerShape(26.dp))
-            .background(BackgroundTint.Paper.color)
+            .background(BackgroundTint.Sand.color)
             .background(Feedback.Neutral.copy(alpha = 0.28f * wrongTint.value))
             .background(
                 when {
@@ -226,20 +230,31 @@ private fun ChoiceCard(
             },
         contentAlignment = Alignment.Center,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
             Text(
                 text = choice.toString(),
                 color = if (ruledOut) Ink.Primary.copy(alpha = 0.45f) else Ink.Primary,
                 fontFamily = Armenian,
                 fontWeight = FontWeight.Black,
                 fontSize = glyphHeight.value.sp,
+                // Armenian ascenders and descenders overflow the default line box, which is
+                // what was clipping the numerals and the word beneath them.
+                lineHeight = (glyphHeight.value * 1.05f).sp,
+                maxLines = 1,
+                softWrap = false,
             )
             Text(
                 text = numberWord(choice),
                 color = if (ruledOut) Ink.Primary.copy(alpha = 0.45f) else Ink.Primary,
                 fontFamily = Armenian,
                 fontWeight = FontWeight.Black,
-                fontSize = (glyphHeight.value * 0.26f).sp,
+                fontSize = (glyphHeight.value * 0.28f).sp,
+                lineHeight = (glyphHeight.value * 0.40f).sp,
+                maxLines = 1,
+                softWrap = false,
             )
         }
     }

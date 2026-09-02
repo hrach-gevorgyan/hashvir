@@ -2,13 +2,30 @@ package com.hrach.hashvir.theme
 
 import androidx.compose.ui.graphics.Color
 
-/** Pastel ground. Rotates per round for novelty without clutter. */
+/**
+ * The island Պույ-պույ lives on. Warm sand, shallow sea, palm shade — the world of the tale
+ * where she climbs into a coconut, eats until she cannot get out, and cries herself thin again.
+ */
 enum class BackgroundTint(val color: Color) {
-    Paper(Color(0xFFFBF6EE)),
-    Sage(Color(0xFFE6EFE4)),
-    Sky(Color(0xFFE4EDF6)),
-    Peach(Color(0xFFFBEBE1)),
-    Lilac(Color(0xFFF0E8F4)),
+    Sand(Color(0xFFFDF3E0)),
+    Lagoon(Color(0xFFDDF1F2)),
+    Palm(Color(0xFFE3F0DC)),
+    Sunset(Color(0xFFFDE8D8)),
+    Shell(Color(0xFFF7EDF3)),
+}
+
+/** Tropical set dressing. Muted on purpose: scenery, never the subject. */
+object Island {
+    val Sea = Color(0xFF5FBDBF)
+    val SeaDeep = Color(0xFF3E9BA3)
+    val SandDark = Color(0xFFE8CFA6)
+    val PalmLeaf = Color(0xFF5C9E52)
+    val PalmDark = Color(0xFF3E7A44)
+    val Trunk = Color(0xFFA97B4F)
+    val Sun = Color(0xFFFFD166)
+    val CoconutShell = Color(0xFF8A5A3B)
+    val CoconutDark = Color(0xFF6B4429)
+    val CoconutFlesh = Color(0xFFFFF6E8)
 }
 
 /**

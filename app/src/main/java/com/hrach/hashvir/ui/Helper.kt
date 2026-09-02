@@ -316,24 +316,24 @@ private fun DrawScope.drawMouse(
         val lift = if (walkPhase == 0f) 0f else maxOf(0f, sin(phase)) * s * 0.045f
         drawOval(
             color = FurDark,
-            topLeft = Offset(cx + side * s * 0.18f - s * 0.09f + swing, ground - s * 0.07f - lift),
-            size = Size(s * 0.18f, s * 0.10f),
+            topLeft = Offset(cx + side * s * 0.13f - s * 0.075f + swing, ground - s * 0.065f - lift),
+            size = Size(s * 0.15f, s * 0.085f),
         )
     }
 
     // Ears: the character. Big, and they lift, droop and spread with mood.
-    val earRadius = s * 0.20f
+    val earRadius = s * 0.185f
     val earY = s * 0.27f - s * 0.055f * earLift
-    val earSpread = s * 0.25f + s * 0.025f * earLift
+    val earSpread = s * 0.215f + s * 0.025f * earLift
     for (side in listOf(-1f, 1f)) {
         val ex = cx + side * earSpread
         drawCircle(Fur, radius = earRadius, center = Offset(ex, earY))
         drawCircle(Mouse.Ear, radius = earRadius * 0.60f, center = Offset(ex, earY))
     }
 
-    // Body: a pear, wider at the base.
-    val bodyW = s * 0.60f * breathe
-    val bodyH = s * 0.56f * breathe
+    // Body: a narrow pear. She is a small thin mouse, not a ball.
+    val bodyW = s * 0.44f * breathe
+    val bodyH = s * 0.60f * breathe
     drawOval(
         color = Fur,
         topLeft = Offset(cx - bodyW / 2f, ground - bodyH),
@@ -346,7 +346,7 @@ private fun DrawScope.drawMouse(
         size = Size(bodyW * 0.60f, bodyH * 0.66f),
     )
 
-    val headR = s * 0.255f * breathe
+    val headR = s * 0.225f * breathe
     val headY = s * 0.44f
     drawCircle(Fur, radius = headR, center = Offset(cx, headY))
 

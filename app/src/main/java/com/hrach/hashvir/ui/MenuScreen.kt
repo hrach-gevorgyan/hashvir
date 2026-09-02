@@ -11,10 +11,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,13 +46,13 @@ import kotlinx.coroutines.launch
 
 enum class Mode(val label: String, val tint: Color) {
     /** Հաշվել — count the fruit. */
-    Count("Հաշվել", Color(0xFFFFE3C7)),
+    Count("Հաշվել", Color(0xFFFFDCB8)),
 
     /** Գուշակել — pick the number she names. */
-    Guess("Գուշակել", Color(0xFFD9EAF7)),
+    Guess("Գուշակել", Color(0xFFC9E9EC)),
 
     /** Սովորել — say the number out loud. */
-    Learn("Սովորել", Color(0xFFDCEFDA)),
+    Learn("Սովորել", Color(0xFFD5EBC8)),
 }
 
 /**
@@ -61,11 +64,12 @@ fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
     BoxWithConstraints(
         modifier
             .fillMaxSize()
-            .background(BackgroundTint.Paper.color)
+            .background(BackgroundTint.Sand.color)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val cardHeight = maxOf((maxHeight - 260.dp) / 3f, 140.dp)
 
-        Scenery(seed = 11, tint = Color(0xFF7B6B57))
+        Scenery(seed = 11)
 
         Column(
             Modifier
@@ -78,19 +82,18 @@ fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
             }
         }
 
-        GroundStrip(
-            tint = Color(0xFF6B8E13),
+        Beach(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
-                .height(52.dp),
+                .height(56.dp),
         )
 
-        WalkingHelper(
-            height = 92.dp,
+        CoconutChase(
+            height = 96.dp,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(bottom = 8.dp),
+                .padding(bottom = 6.dp),
         )
     }
 }

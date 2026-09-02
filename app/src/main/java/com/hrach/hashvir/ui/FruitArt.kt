@@ -89,32 +89,52 @@ private fun DrawScope.orange(u: Float, fruit: Fruit, stroke: Stroke) {
 }
 
 private fun DrawScope.banana(u: Float, fruit: Fruit, stroke: Stroke) {
-    // A fat crescent: thick through the belly, tapering to both tips, sitting on a diagonal.
+    // Thick through the belly, tapering to a stem at one end and a blossom tip at the other.
     val body = Path().apply {
-        moveTo(22f * u, 14f * u)
-        // Outer edge, sweeping down and right.
-        cubicTo(14f * u, 52f * u, 34f * u, 86f * u, 82f * u, 88f * u)
-        // Right tip.
-        cubicTo(90f * u, 88f * u, 92f * u, 78f * u, 86f * u, 74f * u)
-        // Inner edge, coming back up.
-        cubicTo(50f * u, 70f * u, 32f * u, 46f * u, 36f * u, 18f * u)
-        // Left tip.
-        cubicTo(36f * u, 10f * u, 24f * u, 8f * u, 22f * u, 14f * u)
+        moveTo(24f * u, 20f * u)
+        // Outer edge, sweeping down and to the right.
+        cubicTo(6f * u, 62f * u, 34f * u, 94f * u, 82f * u, 90f * u)
+        // Blossom tip.
+        cubicTo(94f * u, 89f * u, 95f * u, 72f * u, 83f * u, 71f * u)
+        // Inner edge, back up. Kept far from the outer edge so it stays fat.
+        cubicTo(50f * u, 68f * u, 33f * u, 47f * u, 40f * u, 22f * u)
+        // Shoulder into the stem.
+        cubicTo(42f * u, 13f * u, 26f * u, 12f * u, 24f * u, 20f * u)
         close()
     }
     drawPath(body, fruit.color)
     drawPath(body, fruit.outline, style = stroke)
 
-    // A soft seam along the inside of the curve gives it volume.
-    val seam = Path().apply {
-        moveTo(30f * u, 24f * u)
-        cubicTo(28f * u, 52f * u, 44f * u, 76f * u, 78f * u, 80f * u)
+    // Two facets: a banana is ridged, not a tube.
+    for ((start, end) in listOf(
+        Offset(31f * u, 30f * u) to Offset(74f * u, 80f * u),
+        Offset(36f * u, 26f * u) to Offset(78f * u, 76f * u),
+    )) {
+        val facet = Path().apply {
+            moveTo(start.x, start.y)
+            cubicTo(
+                start.x - 4f * u, start.y + (end.y - start.y) * 0.55f,
+                start.x + (end.x - start.x) * 0.45f, end.y + 5f * u,
+                end.x, end.y,
+            )
+        }
+        drawPath(facet, Color(0x2E000000), style = Stroke(width = 2.5f * u))
     }
-    drawPath(seam, Color(0x33FFFFFF), style = Stroke(width = 6f * u))
+    drawOval(
+        color = Color(0x4DFFFFFF),
+        topLeft = Offset(26f * u, 28f * u),
+        size = Size(12f * u, 26f * u),
+    )
 
-    // Browned tips, the way a real banana goes.
-    drawCircle(fruit.detail, radius = 6f * u, center = Offset(23f * u, 13f * u))
-    drawCircle(fruit.detail, radius = 5.5f * u, center = Offset(87f * u, 81f * u))
+    // Stem, and the dark blossom end.
+    drawLine(
+        color = fruit.detail,
+        start = Offset(31f * u, 18f * u),
+        end = Offset(33f * u, 6f * u),
+        strokeWidth = 9f * u,
+        cap = androidx.compose.ui.graphics.StrokeCap.Round,
+    )
+    drawCircle(Color(0xFF6B4A2A), radius = 5f * u, center = Offset(88f * u, 80f * u))
 }
 
 private fun DrawScope.pear(u: Float, fruit: Fruit, stroke: Stroke) {

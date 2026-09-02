@@ -7,8 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -42,7 +45,8 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
     BoxWithConstraints(
         modifier
             .fillMaxSize()
-            .background(BackgroundTint.Paper.color)
+            .background(BackgroundTint.Sand.color)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,

@@ -6,10 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -38,6 +35,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // Every screen is a light pastel, so the system icons have to be dark or they
         // disappear into the background.
+        // Draw behind the system bars so each screen's own colour reaches them.
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowCompat.getInsetsController(window, window.decorView).apply {
             isAppearanceLightStatusBars = true
             isAppearanceLightNavigationBars = true
@@ -71,13 +70,9 @@ private fun App(compact: Boolean, game: GameViewModel = viewModel()) {
 
     BackHandler(enabled = screen != Screen.Menu) { toMenu() }
 
-    // Nothing is allowed under the status bar or the gesture bar: at high counts the fruit
-    // was reaching both edges, and the back button sat half under the clock.
-    BoxWithConstraints(
-        Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-    ) {
+    // The screens paint edge to edge; each one insets its own content, so the bars pick up
+    // the colour of whatever is behind them.
+    BoxWithConstraints(Modifier.fillMaxSize()) {
         when (val current = screen) {
             Screen.Intro -> IntroScreen(sounds = sounds, onDone = { screen = Screen.Menu })
 

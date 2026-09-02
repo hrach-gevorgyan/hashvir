@@ -10,10 +10,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -102,13 +105,14 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
     BoxWithConstraints(
         modifier
             .fillMaxSize()
-            .background(BackgroundTint.Paper.color)
+            .background(BackgroundTint.Sand.color)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val shorter = minOf(maxWidth, maxHeight)
         val screenWidth = maxWidth
         val screenHeight = maxHeight
 
-        Scenery(seed = number, tint = Color(0xFF6B5A7A))
+        Scenery(seed = number)
 
         Column(
             Modifier
@@ -189,6 +193,8 @@ private fun BigNumber(number: Int, height: Dp) {
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
             fontSize = height.value.sp,
+            lineHeight = (height.value * 1.05f).sp,
+            maxLines = 1,
         )
         Text(
             text = numberWord(number),
@@ -196,6 +202,9 @@ private fun BigNumber(number: Int, height: Dp) {
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
             fontSize = (height.value * 0.22f).sp,
+            lineHeight = (height.value * 0.30f).sp,
+            maxLines = 1,
+            softWrap = false,
         )
     }
 }

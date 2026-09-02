@@ -68,7 +68,7 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
                         answer = answer,
                         choices = choicesFor(answer, random),
                         // Cards are paper; the ground must not be, or they vanish into it.
-                        background = if (background == BackgroundTint.Paper) {
+                        background = if (background == BackgroundTint.Sand) {
                             nextBackground(background)
                         } else {
                             background
