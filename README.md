@@ -169,7 +169,7 @@ GitHub Actions runs the tests on every push and attaches a signed APK to a Relea
 is pushed:
 
 ```bash
-git tag v0.2 && git push origin v0.2
+git tag v0.2.0 && git push origin v0.2.0
 ```
 
 Signing keys come from repository secrets. Without them the build still succeeds and produces

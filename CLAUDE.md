@@ -109,7 +109,7 @@ GitHub Release when a `v*` tag is pushed. Signing keys come from repository secr
 them the workflow still builds and uploads an unsigned APK.
 
 ```
-git tag v0.2 && git push origin v0.2
+git tag v0.2.0 && git push origin v0.2.0
 ```
 
 This app is not going to Google Play. Distribution is the APK on the Releases page.
