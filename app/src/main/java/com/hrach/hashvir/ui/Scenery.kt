@@ -20,15 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.theme.Island
 import kotlin.math.abs
 import kotlin.math.sin
@@ -76,7 +77,7 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier, strength: Float = 1f) {
             val r = w * 0.07f * scale
             for ((dx, dy, rs) in listOf(Triple(-0.9f, 0.15f, 0.7f), Triple(0f, 0f, 1f), Triple(0.95f, 0.2f, 0.75f))) {
                 drawCircle(
-                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = a(0.42f)),
+                    color = Color.White.copy(alpha = a(0.42f)),
                     radius = r * rs,
                     center = Offset(cx + dx * r, cy + dy * r),
                 )
@@ -96,7 +97,7 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier, strength: Float = 1f) {
             while (x < w) {
                 val wave = Path().apply {
                     moveTo(x, y)
-                    quadraticBezierTo(x + w * 0.03f, y - h * 0.010f, x + w * 0.06f, y)
+                    quadraticTo(x + w * 0.03f, y - h * 0.010f, x + w * 0.06f, y)
                 }
                 drawPath(wave, Island.SeaDeep.copy(alpha = a(0.22f)), style = Stroke(width = h * 0.0035f))
                 x += w * 0.13f
@@ -144,11 +145,11 @@ private fun DrawScope.palm(base: Offset, height: Float, lean: Float, strength: F
         rotate(degrees = angle * 1f, pivot = Offset(topX, topY)) {
             val frond = Path().apply {
                 moveTo(topX, topY)
-                quadraticBezierTo(
+                quadraticTo(
                     topX + height * 0.28f, topY - height * 0.16f,
                     topX + height * 0.52f, topY - height * 0.04f,
                 )
-                quadraticBezierTo(
+                quadraticTo(
                     topX + height * 0.28f, topY + height * 0.06f,
                     topX, topY,
                 )
@@ -192,7 +193,7 @@ fun DrawScope.drawCoconut(diameter: Float, topLeft: Offset = Offset.Zero) {
             drawCircle(Island.CoconutDark, radius = r * 0.11f, center = Offset(r + dx * r, r + dy * r))
         }
         drawOval(
-            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.20f),
+            color = Color.White.copy(alpha = 0.20f),
             topLeft = Offset(r * 0.35f, r * 0.30f),
             size = Size(r * 0.55f, r * 0.40f),
         )
@@ -289,7 +290,7 @@ fun CoconutChase(height: Dp, modifier: Modifier = Modifier) {
                         (if (facingLeft) -height.toPx() * 0.72f else height.toPx() * 0.86f)
                     translationY = -bounce * coconutSize.toPx() * 0.22f
                     rotationZ = (if (facingLeft) -1f else 1f) * sweep * 900f
-                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(
+                    transformOrigin = TransformOrigin(
                         pivotFractionX = coconutSize.toPx() / size.width / 2f,
                         pivotFractionY = 0.5f,
                     )

@@ -5,9 +5,14 @@ import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.SystemClock
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 
 private const val TAG = "SoundBank"
 
@@ -137,17 +142,15 @@ class SoundBank(context: Context) {
  * True while a speech clip is still playing, recomputed every frame so Պույ-պույ's mouth can
  * follow it.
  */
-@androidx.compose.runtime.Composable
+@Composable
 fun rememberSpeaking(sounds: SoundBank): Boolean {
-    var speaking by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf(false)
-    }
+    var speaking by remember { mutableStateOf(false) }
     // Keyed on the end time, so the loop only runs while a clip is actually playing and
     // stops the moment it finishes rather than polling for the life of the screen.
-    androidx.compose.runtime.LaunchedEffect(sounds.speakingUntil) {
-        while (android.os.SystemClock.uptimeMillis() < sounds.speakingUntil) {
+    LaunchedEffect(sounds.speakingUntil) {
+        while (SystemClock.uptimeMillis() < sounds.speakingUntil) {
             speaking = true
-            androidx.compose.runtime.withFrameNanos { }
+            withFrameNanos { }
         }
         speaking = false
     }

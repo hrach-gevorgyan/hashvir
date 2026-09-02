@@ -31,8 +31,8 @@ import com.hrach.hashvir.audio.SoundBank
 import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.game.Layout
 import com.hrach.hashvir.game.Round
-import kotlinx.coroutines.delay
 import kotlin.random.Random
+import kotlinx.coroutines.delay
 
 /** A second after the last tap: the fruit gather, and only then is she asked. */
 private const val GATHER_DELAY_MS = 1000L

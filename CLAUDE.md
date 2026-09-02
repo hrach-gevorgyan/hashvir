@@ -79,26 +79,62 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 These override "use judgment". Violating one is a bug, not a style difference.
 
+**Privacy and dependencies**
+
 - **Zero permissions** in the manifest. No INTERNET. If a change needs a permission, stop and ask.
-- **No third-party dependencies** beyond AndroidX/Compose. No analytics, crash reporting, ads, Room, DataStore, DI.
-- **No text on child-facing screens** except the Armenian number words. No labels, prompts, menus.
-- **No failure states.** No score, timer, lives, "wrong" screen. **No red anywhere for errors** — amber only.
-- **Saturated figure, pastel ground.** Countable objects are always the most saturated thing on screen. If any
-  decoration out-competes them, it is a bug.
-- **Stars are punctuation, not currency.** Always three, non-accumulating. Anything that makes them countable
-  or bankable is out of scope — ask first.
-- **Nothing on screen that isn't part of the task.** Decoration is a cost, not a neutral.
-- Portrait locked, single Activity, no navigation library. Responsive from one composable tree via `WindowSizeClass`.
-- Touch targets ≥ 126dp; 113dp floor only at counts 9–10 on phone. Never lower.
-- Every animation ≤ 400ms; tap response begins within one frame; no looping ambient animation.
-- SoundPool for all audio. Missing clip → log and no-op, never crash.
-- Bundle the Armenian font. Never rely on system fallback.
+- **No third-party dependencies** beyond AndroidX/Compose. No analytics, crash reporting, ads,
+  Room, DataStore, DI framework.
+- Nothing leaves the device. There is no network code and no data collection of any kind.
+
+**How it treats the child**
+
+- **No failure states.** No score, no timer, no lives, no losing. A wrong answer gets a soft
+  "not yet" and another go, and nothing is ever taken away.
+- **Stars are punctuation, not currency.** Always three, non-accumulating, no total anywhere.
+  Anything that makes them countable or bankable is out of scope — ask first.
+- **One voice, one face.** Every spoken word is Պույ-պույ's, and her mouth moves while it plays.
+- **Nothing on screen that is not part of the task.** The island behind the play area is muted
+  and static; if any decoration out-competes the fruit or the numerals, it is a bug.
+
+**Look**
+
+- **Saturated subject, muted ground.** The fruit and the numerals are always the most saturated
+  things on screen. Enforced for colour by `ContrastTest`: every fruit clears 4.5:1 against
+  every background, every ink clears 7:1.
+- Every fruit carries the shared 3dp outline, and contrast is measured on that outline —
+  saturated fills cannot clear 4.5:1 against pastel on their own.
+- **Touch targets ≥ 126dp.** `Layout` treats the percentage sizes as a floor, not a target, and
+  logs a debug warning whenever a screen cannot hold 113dp. Phones cannot at high counts; that
+  is a known limitation, not something to silently design around.
+- Portrait locked, single Activity, no navigation library. One composable tree for phone and
+  tablet, split only by `WindowSizeClass`.
+- Bundle the Armenian font. Never rely on system fallback, which renders tofu on devices with
+  no Armenian font. Armenian ascenders overflow the default line box, so any numeral or word
+  needs an explicit `lineHeight`.
+
+**Sound**
+
+- SoundPool for everything. A missing clip logs once and no-ops; it never crashes.
+- **Clips never overlap.** Lengths are recorded in `SoundBank.speechLengthMs` and every sequence
+  is spaced against them. Re-run `tools/normalize_audio.py` after changing any clip and update
+  those numbers.
+
+**Deliberate reversals of the original design**
+
+The first version of this app was text-free, animation-free and had no red anywhere. All three
+were changed on purpose, and should not be "fixed" back:
+
+- The **menu carries Armenian labels**, because an adult has to be able to pick a mode.
+- **Red marks a ruled-out card** in Գուշակել and the grown-up's ✗ button in Սովորել. Red still
+  never means failure — a wrong tap is amber and a soft sound.
+- **Պույ-պույ is always moving** — breathing, blinking, walking. The original rule banned ambient
+  animation to protect focus; the character being alive was judged worth more.
 
 ## Part 3 — Commands
 
 ```bash
 ./gradlew assembleDebug     # build
-./gradlew testDebugUnitTest # unit tests (layout, contrast, distractors)
+./gradlew testDebugUnitTest # layout, contrast, round generation, choices, clips
 ./gradlew installDebug      # to attached device
 ```
 

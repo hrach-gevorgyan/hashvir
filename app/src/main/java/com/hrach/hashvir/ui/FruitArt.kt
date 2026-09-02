@@ -4,9 +4,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.theme.Fruit
 
 /**
@@ -18,7 +20,10 @@ import com.hrach.hashvir.theme.Fruit
  */
 fun DrawScope.drawFruit(fruit: Fruit, boxSize: Float, topLeft: Offset = Offset.Zero) {
     val unit = boxSize / 100f
-    val stroke = Stroke(width = Fruit.OutlineWidthDp * density * (boxSize / (126f * density)).coerceIn(0.7f, 1.6f))
+    // 3dp on a full-size fruit, scaled with the drawing so a small menu icon is not fenced in
+    // by a heavy line, and clamped so it can neither vanish nor dominate.
+    val scale = (boxSize / Fruit.ReferenceDiameterDp.dp.toPx()).coerceIn(0.7f, 1.6f)
+    val stroke = Stroke(width = Fruit.OutlineWidthDp.dp.toPx() * scale)
     translate(topLeft.x, topLeft.y) {
         when (fruit) {
             Fruit.Apple -> apple(unit, fruit, stroke)
@@ -37,15 +42,15 @@ private fun DrawScope.stem(u: Float, fruit: Fruit, x: Float, y: Float, height: F
         start = Offset(x * u, y * u),
         end = Offset(x * u, (y - height) * u),
         strokeWidth = 4f * u,
-        cap = androidx.compose.ui.graphics.StrokeCap.Round,
+        cap = StrokeCap.Round,
     )
 }
 
 private fun DrawScope.leaf(u: Float, color: Color, cx: Float, cy: Float, w: Float, h: Float, tilt: Float) {
     val path = Path().apply {
         moveTo((cx - w / 2f) * u, cy * u)
-        quadraticBezierTo((cx - w * 0.1f) * u, (cy - h) * u, (cx + w / 2f) * u, (cy - tilt) * u)
-        quadraticBezierTo((cx - w * 0.1f) * u, (cy + h * 0.35f) * u, (cx - w / 2f) * u, cy * u)
+        quadraticTo((cx - w * 0.1f) * u, (cy - h) * u, (cx + w / 2f) * u, (cy - tilt) * u)
+        quadraticTo((cx - w * 0.1f) * u, (cy + h * 0.35f) * u, (cx - w / 2f) * u, cy * u)
         close()
     }
     drawPath(path, color)
@@ -132,7 +137,7 @@ private fun DrawScope.banana(u: Float, fruit: Fruit, stroke: Stroke) {
         start = Offset(31f * u, 18f * u),
         end = Offset(33f * u, 6f * u),
         strokeWidth = 9f * u,
-        cap = androidx.compose.ui.graphics.StrokeCap.Round,
+        cap = StrokeCap.Round,
     )
     drawCircle(Color(0xFF6B4A2A), radius = 5f * u, center = Offset(88f * u, 80f * u))
 }

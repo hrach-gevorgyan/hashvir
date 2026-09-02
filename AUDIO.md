@@ -3,8 +3,12 @@
 Drop finished files in `app/src/main/res/raw/`, then run `python tools/normalize_audio.py`,
 which trims the silence, converts to mono OGG and puts the whole set at -16 LUFS.
 
+All 43 clips are recorded and in place. This list exists so the set can be re-recorded in
+another voice, or another language, without guessing at what each one says.
+
 **File requirements**
-- Format **OGG Vorbis**, filename exactly as in the `File` column plus `.ogg` (e.g. `num_1.ogg`).
+- Format **OGG Vorbis**, mono, filename exactly as in the `File` column plus `.ogg`
+  (e.g. `num_1.ogg`). `normalize_audio.py` converts MP3 and WAV for you.
 - Lowercase, digits and underscore only — anything else and the resource will not compile.
 - Mono, 44.1 kHz is fine. Keep each clip tight: trim leading silence to under ~30 ms, or the
   tap will feel laggy no matter how fast the code is.

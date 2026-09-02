@@ -25,7 +25,6 @@ object Island {
     val Sun = Color(0xFFFFD166)
     val CoconutShell = Color(0xFF8A5A3B)
     val CoconutDark = Color(0xFF6B4429)
-    val CoconutFlesh = Color(0xFFFFF6E8)
 }
 
 /**
@@ -48,6 +47,9 @@ enum class Fruit(val color: Color, val detail: Color) {
     companion object {
         val OutlineColor = Color(0xFF3A4454)
         const val OutlineWidthDp = 3f
+
+        /** The size the outline width is quoted against: one fruit at the dp floor. */
+        const val ReferenceDiameterDp = 126f
     }
 }
 

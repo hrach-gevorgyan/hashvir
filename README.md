@@ -16,7 +16,7 @@
 [![Ads](https://img.shields.io/badge/ads-none-3BA55C)](#-what-it-does-not-do)
 [![Tracking](https://img.shields.io/badge/tracking-none-3BA55C)](#-what-it-does-not-do)
 [![Offline](https://img.shields.io/badge/works-offline-3BA55C)](#-what-it-does-not-do)
-[![APK](https://img.shields.io/badge/apk-1.8%20MB-3BA55C)](#-build)
+[![APK](https://img.shields.io/badge/apk-1.6%20MB-3BA55C)](#-build)
 [![License](https://img.shields.io/badge/license-MIT-2E2A28)](LICENSE)
 
 </div>
@@ -111,6 +111,18 @@ Dependencies are AndroidX and Compose, and nothing else.
 
 ---
 
+## 🚧 Not built yet
+
+Honest list, so nobody has to go looking:
+
+- **Parent controls** — no volume, no mute, no way to limit the range to 1–5, and no gate in
+  front of the back button.
+- **Zero, subitising, and comparing quantities** — the three things I would add next.
+- **Phones above six items.** Targets fall to roughly 13–14mm, under what a three-year-old can
+  comfortably hit. A tablet fits them properly.
+
+---
+
 ## 📦 Install
 
 Grab the APK from [**Releases**](https://github.com/hrach-gevorgyan/hashvir/releases/latest) and
@@ -145,7 +157,9 @@ app/src/main/java/com/hrach/hashvir/
 tools/        audio normalisation and banner generation
 ```
 
-Unit tests cover the layout rules, colour contrast, round generation and the choice generator.
+Unit tests cover the layout rules and the dp floor on four reference screen sizes, colour
+contrast for every fruit against every background, the round generation no-repeat rules, the
+choice generator, and the clip list.
 
 </details>
 

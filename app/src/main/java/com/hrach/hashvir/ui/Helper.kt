@@ -443,7 +443,7 @@ private fun DrawScope.drawMouse(
         val by = headY - headR * 0.54f - (if (smile < 0f) headR * 0.04f else 0f)
         val brow = Path().apply {
             moveTo(bx - headR * 0.15f, by + headR * 0.05f)
-            quadraticBezierTo(bx, by - headR * 0.07f, bx + headR * 0.15f, by + headR * 0.05f)
+            quadraticTo(bx, by - headR * 0.07f, bx + headR * 0.15f, by + headR * 0.05f)
         }
         drawPath(
             brow,
@@ -463,23 +463,23 @@ private fun DrawScope.drawMouse(
         val open = headR * 0.22f * mouthOpen
         val jaw = Path().apply {
             moveTo(cx - mouthW, mouthY)
-            quadraticBezierTo(cx, mouthY + open * 1.7f, cx + mouthW, mouthY)
-            quadraticBezierTo(cx, mouthY - open * 0.28f, cx - mouthW, mouthY)
+            quadraticTo(cx, mouthY + open * 1.7f, cx + mouthW, mouthY)
+            quadraticTo(cx, mouthY - open * 0.28f, cx - mouthW, mouthY)
             close()
         }
         drawPath(jaw, Color(0xFF7A5560))
         // Tongue, so the open mouth does not read as a hole.
         val tongue = Path().apply {
             moveTo(cx - mouthW * 0.52f, mouthY + open * 0.55f)
-            quadraticBezierTo(cx, mouthY + open * 1.55f, cx + mouthW * 0.52f, mouthY + open * 0.55f)
-            quadraticBezierTo(cx, mouthY + open * 0.30f, cx - mouthW * 0.52f, mouthY + open * 0.55f)
+            quadraticTo(cx, mouthY + open * 1.55f, cx + mouthW * 0.52f, mouthY + open * 0.55f)
+            quadraticTo(cx, mouthY + open * 0.30f, cx - mouthW * 0.52f, mouthY + open * 0.55f)
             close()
         }
         drawPath(tongue, Color(0xFFE07A8C))
     } else {
         val mouth = Path().apply {
             moveTo(cx - mouthW, mouthY)
-            quadraticBezierTo(
+            quadraticTo(
                 cx,
                 mouthY + (smile + extraSmile).coerceAtMost(1.2f) * headR * 0.30f,
                 cx + mouthW,
@@ -498,7 +498,7 @@ private fun DrawScope.drawMouse(
             // Squeezed shut: a happy arc, not a flat line.
             val arc = Path().apply {
                 moveTo(ex - eyeR, eyeY + eyeR * 0.25f)
-                quadraticBezierTo(ex, eyeY - eyeR * 0.65f, ex + eyeR, eyeY + eyeR * 0.25f)
+                quadraticTo(ex, eyeY - eyeR * 0.65f, ex + eyeR, eyeY + eyeR * 0.25f)
             }
             drawPath(arc, Mouse.Detail, style = Stroke(width = s * 0.018f, cap = StrokeCap.Round))
         } else {

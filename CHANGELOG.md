@@ -7,7 +7,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- Documentation brought in line with the app: CLAUDE.md now records the three rules that were
+  deliberately reversed (menu labels, red for ruled-out cards, a mouse that is always moving)
+  rather than describing a version that no longer exists.
+- README lists what is deliberately not built yet.
+
+### Removed
+
+- Dead constant `Island.CoconutFlesh`, an unused import, and the last inline fully-qualified
+  references. The build is now free of compiler warnings.
 
 ## [0.2.1] — 2026-09-03
 
