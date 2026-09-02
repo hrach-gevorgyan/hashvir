@@ -86,7 +86,7 @@ class SoundBank(context: Context) {
     private fun speechLengthMs(name: String): Long = when {
         name == "intro" -> 7000
         name == "what_number" -> 1350
-        name == "how_many" -> 1500
+        name == "how_many" -> 2000
         name.startsWith("total_") -> 1550
         name.startsWith("ask_") -> 1250
         name.startsWith("praise_") -> 1100

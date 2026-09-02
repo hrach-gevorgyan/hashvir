@@ -100,7 +100,7 @@ retry immediately and should not feel it as a failure. Short, under ~600 ms.
 |---|---|
 | `intro` | Բարև։ Ես Պույ-պույն եմ։ Ազգանունս Ճստունի։ Ես քեզ կօգնեմ սովորել թվերը։ |
 | `what_number` | Սա ո՞ր թիվն է — the prompt in Սովորել |
-| `how_many` | **Still needed.** Քանի՞ հատ էր — asked at the end of every Հաշվել round, once the fruit have gathered into one group. Warm and curious, with a real pause after it: this is the question she answers out loud, and it is what turns counting into quantity. |
+| `how_many` | Քանի՞ հատ միրգ հաշվեցիր դու — asked at the end of every Հաշվել round, once the fruit have gathered into one group. Followed by 3s of silence, which is hers: this is the question she answers out loud, and it is what turns counting into quantity. |
 
 ## Non-verbal — 4 clips
 

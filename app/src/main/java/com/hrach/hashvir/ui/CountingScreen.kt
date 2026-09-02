@@ -43,9 +43,11 @@ private const val GATHER_DELAY_MS = 400L
  * This is the cardinality step: counting only becomes quantity once the child produces the
  * last number herself as the answer to how many. The fruit stay on screen, gathered into one
  * group, for the whole of it.
+ *
+ * QUESTION_MS covers the clip; THINKING_MS is the silence after it, which is hers.
  */
-private const val QUESTION_MS = 1600L
-private const val THINKING_MS = 2600L
+private const val QUESTION_MS = 2050L
+private const val THINKING_MS = 3000L
 
 /**
  * Round-end audio runs strictly one clip at a time. Measured lengths: total up to 1.50s,

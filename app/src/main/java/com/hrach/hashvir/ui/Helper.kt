@@ -81,7 +81,7 @@ fun PouyPouy(
     val lean = remember { Animatable(0f) }
     val arm = remember { Animatable(0f) }
     val shake = remember { Animatable(0f) }
-    val smile = remember { Animatable(0.35f) }
+    val smile = remember { Animatable(0.62f) }
     val lookX = remember { Animatable(0f) }
     val lookY = remember { Animatable(0f) }
     val eyesShut = remember { Animatable(0f) }
@@ -121,7 +121,7 @@ fun PouyPouy(
                 earLift.animateTo(0f, tween(250))
                 lean.animateTo(0f, tween(250))
                 arm.animateTo(0f, tween(250))
-                smile.animateTo(0.35f, tween(250))
+                smile.animateTo(0.62f, tween(250))
                 lookX.animateTo(0f, tween(400))
                 lookY.animateTo(0f, tween(400))
                 shake.snapTo(0f)
@@ -142,10 +142,10 @@ fun PouyPouy(
 
             HelperState.Thinking -> {
                 eyesShut.animateTo(0f, tween(150))
-                smile.animateTo(0.15f, tween(250))
+                smile.animateTo(0.45f, tween(250))
                 arm.animateTo(0.35f, tween(300, easing = FastOutSlowInEasing))
-                earLift.animateTo(-0.7f, tween(300, easing = FastOutSlowInEasing))
-                lean.animateTo(1f, tween(300, easing = FastOutSlowInEasing))
+                earLift.animateTo(-0.35f, tween(300, easing = FastOutSlowInEasing))
+                lean.animateTo(0.6f, tween(300, easing = FastOutSlowInEasing))
                 // Eyes drift up and away, the way anyone looks when working something out.
                 lookY.animateTo(-0.7f, tween(600, easing = FastOutSlowInEasing))
                 lookX.animateTo(
@@ -184,7 +184,7 @@ fun PouyPouy(
                 arm.animateTo(0f, tween(150))
                 earLift.animateTo(-1f, tween(300))
                 lean.animateTo(0f, tween(150))
-                smile.animateTo(-1f, tween(250))
+                smile.animateTo(-0.55f, tween(250))
                 eyesShut.animateTo(0.45f, tween(250))
                 lookY.animateTo(0.6f, tween(300))
                 // Slow, sympathetic head shake — "not that one" — never a buzz.
@@ -406,16 +406,20 @@ private fun DrawScope.drawMouse(
         }
     }
 
-    // Brows: small, and they carry most of the expression.
+    // Brows: gentle arcs, always curving upward. Straight brows angled in toward the nose
+    // are the universal angry face, which is exactly what she must never look like.
     for (side in listOf(-1f, 1f)) {
-        val bx = cx + side * headR * 0.42f
-        val by = headY - headR * 0.52f + (if (smile < 0f) headR * 0.10f else 0f)
-        drawLine(
-            color = Mouse.Detail.copy(alpha = 0.55f),
-            start = Offset(bx - headR * 0.16f, by + side * smile * headR * 0.05f),
-            end = Offset(bx + headR * 0.16f, by - side * smile * headR * 0.05f),
-            strokeWidth = s * 0.014f,
-            cap = StrokeCap.Round,
+        val bx = cx + side * headR * 0.40f
+        // Worried when sad: both brows lift at the inner end. Never lowered.
+        val by = headY - headR * 0.54f - (if (smile < 0f) headR * 0.04f else 0f)
+        val brow = Path().apply {
+            moveTo(bx - headR * 0.15f, by + headR * 0.05f)
+            quadraticBezierTo(bx, by - headR * 0.07f, bx + headR * 0.15f, by + headR * 0.05f)
+        }
+        drawPath(
+            brow,
+            Mouse.Detail.copy(alpha = 0.32f),
+            style = Stroke(width = s * 0.012f, cap = StrokeCap.Round),
         )
     }
 
@@ -425,16 +429,16 @@ private fun DrawScope.drawMouse(
 
     // Mouth: a curve from wide grin to small frown, or an open jaw while she is speaking.
     val mouthY = muzzleY + headR * 0.20f
-    val mouthW = headR * 0.34f
+    val mouthW = headR * 0.30f
     if (mouthOpen > 0.01f) {
-        val open = headR * 0.30f * mouthOpen
+        val open = headR * 0.22f * mouthOpen
         val jaw = Path().apply {
             moveTo(cx - mouthW, mouthY)
             quadraticBezierTo(cx, mouthY + open * 1.7f, cx + mouthW, mouthY)
             quadraticBezierTo(cx, mouthY - open * 0.28f, cx - mouthW, mouthY)
             close()
         }
-        drawPath(jaw, Color(0xFF5B4048))
+        drawPath(jaw, Color(0xFF7A5560))
         // Tongue, so the open mouth does not read as a hole.
         val tongue = Path().apply {
             moveTo(cx - mouthW * 0.52f, mouthY + open * 0.55f)
