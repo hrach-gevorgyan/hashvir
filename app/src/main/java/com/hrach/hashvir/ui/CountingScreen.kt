@@ -34,8 +34,8 @@ import com.hrach.hashvir.game.Round
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-/** Beat between the last tap and the question, so the count settles first. */
-private const val GATHER_DELAY_MS = 400L
+/** A second after the last tap: the fruit gather, and only then is she asked. */
+private const val GATHER_DELAY_MS = 1000L
 
 /**
  * How long she gets to answer «Քանի՞ հատ էր» before Պույ-պույ confirms it.

@@ -6,10 +6,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
@@ -18,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.audio.SoundBank
 import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.theme.BackgroundTint
@@ -54,14 +61,40 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
                 onClick = onDone,
             )
     ) {
-        val mouseSize = minOf(maxWidth, maxHeight) * 0.62f
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        val mouseSize = minOf(maxWidth, maxHeight) * 0.52f
+
+        Scenery(seed = 3)
+
+        Beach(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .height(88.dp),
+        )
+
+        // She is standing on the beach with the coconut she is about to chase.
+        Box(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = maxHeight * 0.10f),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
             PouyPouy(
                 state = HelperState.Waving,
                 size = mouseSize,
                 modifier = Modifier.scale(entrance.value),
                 speaking = rememberSpeaking(sounds),
             )
+        }
+
+        Canvas(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = maxHeight * 0.085f, start = mouseSize)
+                .size(mouseSize * 0.30f)
+                .scale(entrance.value)
+        ) {
+            drawCoconut(size.minDimension)
         }
     }
 }
