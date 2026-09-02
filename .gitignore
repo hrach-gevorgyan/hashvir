@@ -13,3 +13,6 @@ captures/
 *.keystore
 keystore.properties
 key.properties
+
+# Generated signing material and its base64 form
+keystore.b64
