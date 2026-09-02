@@ -16,6 +16,32 @@ data class Round(
     val isComplete: Boolean get() = tapped.size == count
 }
 
+/**
+ * A recognition round: Պույ-պույ asks for [answer], and it is one of three [choices].
+ */
+data class RecognitionRound(
+    val answer: Int,
+    val choices: List<Int>,
+    val background: BackgroundTint,
+) {
+    init {
+        require(answer in choices) { "the answer must be among the choices" }
+    }
+}
+
+/**
+ * Three choices containing [answer], in randomized order.
+ *
+ * Distractors come from answer +-1..3 so the discrimination is real — 3 against 8 teaches
+ * nothing, 3 against 4 does. Clamped to 1..10 and always distinct.
+ */
+fun choicesFor(answer: Int, random: Random = Random.Default): List<Int> {
+    val nearby = ((answer - 3)..(answer + 3))
+        .filter { it != answer && it in 1..10 }
+        .shuffled(random)
+    return (nearby.take(2) + answer).shuffled(random)
+}
+
 /** The written word shown beneath the numeral. Index 0 is unused. */
 private val NUMBER_WORDS = listOf(
     "",

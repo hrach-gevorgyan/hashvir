@@ -1,8 +1,10 @@
 package com.hrach.hashvir.ui
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.theme.Mouse
@@ -33,21 +36,27 @@ enum class HelperState {
 
     /** Round completion: both ears perk, whole body bounces. */
     Happy,
+
+    /** Start of a recognition round: ears rotate forward, slight lean in. */
+    Asking,
 }
 
 @Composable
 fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
     val bounce = remember { Animatable(1f) }
     val earLift = remember { Animatable(0f) }
+    val lean = remember { Animatable(0f) }
 
     LaunchedEffect(state) {
         when (state) {
             HelperState.Still -> {
                 bounce.snapTo(1f)
                 earLift.snapTo(0f)
+                lean.snapTo(0f)
             }
 
             HelperState.Happy -> {
+                lean.animateTo(0f, tween(200))
                 earLift.animateTo(1f, spring(stiffness = Spring.StiffnessLow))
                 bounce.animateTo(
                     1f,
@@ -55,11 +64,18 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
                     initialVelocity = 6f,
                 )
             }
+
+            HelperState.Asking -> {
+                earLift.animateTo(-0.8f, tween(300, easing = FastOutSlowInEasing))
+                lean.animateTo(1f, tween(300, easing = FastOutSlowInEasing))
+            }
         }
     }
 
     Canvas(modifier.size(size)) {
-        drawMouse(bounce.value, earLift.value)
+        rotate(degrees = 7f * lean.value, pivot = Offset(this.size.width / 2f, this.size.height)) {
+            drawMouse(bounce.value, earLift.value)
+        }
     }
 }
 

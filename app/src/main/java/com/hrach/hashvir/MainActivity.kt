@@ -16,7 +16,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hrach.hashvir.audio.SoundBank
 import com.hrach.hashvir.game.GameViewModel
+import com.hrach.hashvir.game.Stage
 import com.hrach.hashvir.ui.CountingScreen
+import com.hrach.hashvir.ui.RecognitionScreen
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -38,16 +40,25 @@ private fun App(compact: Boolean, game: GameViewModel = viewModel()) {
     DisposableEffect(sounds) { onDispose { sounds.release() } }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        game.ensureRound(maxWidth, maxHeight, compact)
+        game.ensureStage(maxWidth, maxHeight, compact)
 
-        game.round?.let { round ->
-            CountingScreen(
-                round = round,
+        val finish = { game.onRoundFinished(maxWidth, maxHeight, compact) }
+        when (val stage = game.stage) {
+            is Stage.Counting -> CountingScreen(
+                round = stage.round,
                 sounds = sounds,
                 compact = compact,
                 onTap = game::onTap,
-                onRoundFinished = { game.onRoundFinished(maxWidth, maxHeight, compact) },
+                onRoundFinished = finish,
             )
+
+            is Stage.Recognition -> RecognitionScreen(
+                round = stage.round,
+                sounds = sounds,
+                onRoundFinished = finish,
+            )
+
+            null -> Unit
         }
     }
 }
