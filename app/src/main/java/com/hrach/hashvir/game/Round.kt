@@ -3,11 +3,11 @@ package com.hrach.hashvir.game
 import androidx.compose.ui.geometry.Offset
 import kotlin.random.Random
 import com.hrach.hashvir.theme.BackgroundTint
-import com.hrach.hashvir.theme.ObjectType
+import com.hrach.hashvir.theme.Fruit
 
 data class Round(
     val count: Int,
-    val objectType: ObjectType,
+    val fruit: Fruit,
     val background: BackgroundTint,
     /** Object centres, normalized 0f..1f within the play area. */
     val positions: List<Offset>,
@@ -30,16 +30,19 @@ data class RecognitionRound(
 }
 
 /**
- * Three choices containing [answer], in randomized order.
+ * Four choices containing [answer], in randomized order.
  *
- * Distractors come from answer +-1..3 so the discrimination is real — 3 against 8 teaches
- * nothing, 3 against 4 does. Clamped to 1..10 and always distinct.
+ * Distractors come from nearby numbers so the discrimination is real — 3 against 8 teaches
+ * nothing, 3 against 4 does. Widened from +-3 to +-4 only as far as it takes to find three
+ * distinct neighbours, which matters at the ends of the range. Always within 1..10.
  */
 fun choicesFor(answer: Int, random: Random = Random.Default): List<Int> {
-    val nearby = ((answer - 3)..(answer + 3))
-        .filter { it != answer && it in 1..10 }
+    val nearby = (1..10)
+        .filter { it != answer }
+        .sortedBy { kotlin.math.abs(it - answer) }
+        .take(6)
         .shuffled(random)
-    return (nearby.take(2) + answer).shuffled(random)
+    return (nearby.take(3) + answer).shuffled(random)
 }
 
 /** The written word shown beneath the numeral. Index 0 is unused. */
@@ -71,8 +74,8 @@ fun nextCount(previous: Int?, range: IntRange = 1..10, random: Random = Random.D
     return choices[random.nextInt(choices.size)]
 }
 
-fun nextObjectType(previous: ObjectType?, random: Random = Random.Default): ObjectType {
-    val choices = ObjectType.entries.filter { it != previous }
+fun nextFruit(previous: Fruit?, random: Random = Random.Default): Fruit {
+    val choices = Fruit.entries.filter { it != previous }
     return choices[random.nextInt(choices.size)]
 }
 

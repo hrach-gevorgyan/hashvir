@@ -8,20 +8,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.AndroidViewModel
 import com.hrach.hashvir.theme.BackgroundTint
+import com.hrach.hashvir.ui.Mode
 import kotlin.random.Random
 
 private const val PREFS = "hashvir"
 private const val KEY_ROUNDS_COMPLETED = "roundsCompleted"
 
-/** Recognition mode stays out of the way until counting is familiar. */
-private const val RECOGNITION_UNLOCK = 30
-
-/** Then three of one, three of the other. */
-private const val PHASE_LENGTH = 3
-
 sealed interface Stage {
     data class Counting(val round: Round) : Stage
     data class Recognition(val round: RecognitionRound) : Stage
+
+    /** Սովորել keeps its own state inside the screen; the stage just selects it. */
+    data object Learning : Stage
 }
 
 class GameViewModel(app: Application) : AndroidViewModel(app) {
@@ -29,7 +27,7 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
     private val prefs = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     private val random = Random.Default
 
-    /** Persisted. Used only to unlock recognition mode; never shown to the child. */
+    /** Persisted, and never shown to the child. Kept for the parent screen later. */
     var roundsCompleted: Int = prefs.getInt(KEY_ROUNDS_COMPLETED, 0)
         private set
 
@@ -38,9 +36,14 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
 
     private val countingRound: Round? get() = (stage as? Stage.Counting)?.round
 
-    /** Builds the first stage, and rebuilds on rotation or a size change. */
-    fun ensureStage(width: Dp, height: Dp, compact: Boolean) {
-        if (stage == null) stage = generate(width, height, compact)
+    /** Builds the first stage of a mode, and rebuilds on rotation or a size change. */
+    fun ensureStage(mode: Mode, width: Dp, height: Dp, compact: Boolean) {
+        if (stage == null) stage = generate(mode, width, height, compact)
+    }
+
+    /** Leaving a mode clears it, so the next one starts fresh. */
+    fun reset() {
+        stage = null
     }
 
     fun onTap(index: Int) {
@@ -49,59 +52,54 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
         stage = Stage.Counting(current.copy(tapped = current.tapped + index))
     }
 
-    /** Called once the round is over: after the chime, or after the praise. */
-    fun onRoundFinished(width: Dp, height: Dp, compact: Boolean) {
+    fun onRoundFinished(mode: Mode, width: Dp, height: Dp, compact: Boolean) {
         roundsCompleted += 1
         prefs.edit().putInt(KEY_ROUNDS_COMPLETED, roundsCompleted).apply()
-        stage = generate(width, height, compact)
+        stage = generate(mode, width, height, compact)
     }
 
-    /**
-     * Counting until [RECOGNITION_UNLOCK] rounds are behind her, then three of each in turn.
-     * Derived from the persisted count rather than held separately, so it survives a restart.
-     */
-    private fun isRecognitionTurn(): Boolean {
-        if (roundsCompleted < RECOGNITION_UNLOCK) return false
-        val since = roundsCompleted - RECOGNITION_UNLOCK
-        return (since / PHASE_LENGTH) % 2 == 1
-    }
-
-    private fun generate(width: Dp, height: Dp, compact: Boolean): Stage {
+    private fun generate(mode: Mode, width: Dp, height: Dp, compact: Boolean): Stage {
         val previousBackground = when (val current = stage) {
             is Stage.Counting -> current.round.background
             is Stage.Recognition -> current.round.background
-            null -> null
+            else -> null
         }
         val background = nextBackground(previousBackground)
 
-        if (isRecognitionTurn()) {
-            val answer = nextCount(
-                (stage as? Stage.Recognition)?.round?.answer,
-                random = random,
-            )
-            return Stage.Recognition(
-                RecognitionRound(
-                    answer = answer,
-                    choices = choicesFor(answer, random),
-                    // Cards are paper; the ground must not be, or they disappear into it.
-                    background = if (background == BackgroundTint.Paper) {
-                        nextBackground(background)
-                    } else {
-                        background
-                    },
-                )
-            )
-        }
+        return when (mode) {
+            Mode.Learn -> Stage.Learning
 
-        val previous = countingRound
-        val count = nextCount(previous?.count, random = random)
-        return Stage.Counting(
-            Round(
-                count = count,
-                objectType = nextObjectType(previous?.objectType, random),
-                background = background,
-                positions = Layout.positions(count, width, height, compact, random),
-            )
-        )
+            Mode.Guess -> {
+                val answer = nextCount(
+                    (stage as? Stage.Recognition)?.round?.answer,
+                    random = random,
+                )
+                Stage.Recognition(
+                    RecognitionRound(
+                        answer = answer,
+                        choices = choicesFor(answer, random),
+                        // Cards are paper; the ground must not be, or they vanish into it.
+                        background = if (background == BackgroundTint.Paper) {
+                            nextBackground(background)
+                        } else {
+                            background
+                        },
+                    )
+                )
+            }
+
+            Mode.Count -> {
+                val previous = countingRound
+                val count = nextCount(previous?.count, random = random)
+                Stage.Counting(
+                    Round(
+                        count = count,
+                        fruit = nextFruit(previous?.fruit, random),
+                        background = background,
+                        positions = Layout.positions(count, width, height, compact, random),
+                    )
+                )
+            }
+        }
     }
 }

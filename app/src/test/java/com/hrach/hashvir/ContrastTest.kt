@@ -2,7 +2,7 @@ package com.hrach.hashvir
 
 import com.hrach.hashvir.theme.BackgroundTint
 import com.hrach.hashvir.theme.Ink
-import com.hrach.hashvir.theme.ObjectType
+import com.hrach.hashvir.theme.Fruit
 import com.hrach.hashvir.theme.contrastOn
 import com.hrach.hashvir.theme.contrastRatio
 import org.junit.Assert.assertTrue
@@ -22,7 +22,7 @@ class ContrastTest {
     @Test
     fun `every object clears 4 point 5 to 1 on every background`() {
         val failures = mutableListOf<String>()
-        for (obj in ObjectType.entries) {
+        for (obj in Fruit.entries) {
             val row = BackgroundTint.entries.joinToString {
                 "${it.name}=${"%.2f".format(obj.contrastOn(it))}"
             }

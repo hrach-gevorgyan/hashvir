@@ -1,4 +1,4 @@
-# Audio recording list — 40 clips
+# Audio recording list — 42 clips
 
 Drop finished files in `app/src/main/res/raw/`.
 
@@ -93,6 +93,13 @@ retry immediately and should not feel it as a failure. Short, under ~600 ms.
 |---|---|
 | `oops_1` | Հը՞մ |
 | `oops_2` | Օ՜յ |
+
+## Spoken, supplied as MP3
+
+| File | Says |
+|---|---|
+| `intro` | Բարև։ Ես Պույ-պույն եմ։ Ազգանունս Ճստունի։ Ես քեզ կօգնեմ սովորել թվերը։ |
+| `what_number` | Սա ո՞ր թիվն է — the prompt in Սովորել |
 
 ## Non-verbal — 4 clips
 

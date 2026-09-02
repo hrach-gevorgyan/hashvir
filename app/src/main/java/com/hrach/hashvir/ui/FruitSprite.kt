@@ -5,40 +5,39 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.hrach.hashvir.theme.ObjectType
+import com.hrach.hashvir.theme.Fruit
 
 private const val TAPPED_SCALE = 0.85f
 private const val TAPPED_ALPHA = 0.45f
 
 /**
- * A countable object. Saturated fill, 3dp outline so the edge holds against the pastel ground.
+ * One tappable fruit.
  *
- * A tapped object stays on screen at reduced scale and opacity for the rest of the round —
- * at counts 9-10 that is what lets her see what is left without recounting from the start.
+ * A tapped fruit stays on screen at reduced scale and opacity for the rest of the round — at
+ * high counts that is what lets her see what is left without recounting from the start.
  */
 @Composable
-fun ObjectSprite(
-    type: ObjectType,
+fun FruitSprite(
+    fruit: Fruit,
     diameter: Dp,
     tapped: Boolean,
     onTap: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scale = remember { Animatable(1f) }
+    val wiggle = remember { Animatable(0f) }
 
-    // Bounce out and settle: 1.0 -> 1.25 -> resting, inside 300ms.
     LaunchedEffect(tapped) {
         if (tapped) {
             scale.animateTo(1.25f, tween(durationMillis = 100))
@@ -47,9 +46,17 @@ fun ObjectSprite(
                 spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
             )
         } else {
-            // Sprites are reused across rounds; without this a fresh object inherits the
+            // Sprites are reused across rounds; without this a fresh fruit inherits the
             // previous round's tapped scale.
             scale.snapTo(1f)
+            wiggle.snapTo(0f)
+        }
+    }
+
+    LaunchedEffect(tapped) {
+        if (tapped) {
+            wiggle.animateTo(-8f, tween(90))
+            wiggle.animateTo(0f, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
         }
     }
 
@@ -57,6 +64,7 @@ fun ObjectSprite(
         modifier
             .size(diameter)
             .scale(scale.value)
+            .rotate(wiggle.value)
             .alpha(if (tapped) TAPPED_ALPHA else 1f)
             // No ripple: the bounce is the response, and a ripple would out-compete the fill.
             .clickable(
@@ -66,9 +74,6 @@ fun ObjectSprite(
                 onClick = onTap,
             )
     ) {
-        val stroke = ObjectType.OutlineWidthDp.dp.toPx()
-        val radius = size.minDimension / 2f
-        drawCircle(type.color, radius = radius)
-        drawCircle(type.outline, radius = radius - stroke / 2f, style = Stroke(width = stroke))
+        drawFruit(fruit, size.minDimension)
     }
 }

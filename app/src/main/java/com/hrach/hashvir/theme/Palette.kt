@@ -12,19 +12,18 @@ enum class BackgroundTint(val color: Color) {
 }
 
 /**
- * Saturated figure. Always the most vivid layer on screen.
+ * The countable things: real fruit, fully saturated. Always the most vivid layer on screen.
  *
- * Every object carries the same 3dp outline. Saturated fills cannot clear 4.5:1 against
- * pastel grounds (apricot reaches only 2.2:1, star 1.5:1), so the outline is what holds
- * the edge and what contrast is measured on. Fills stay fully saturated.
+ * Every fruit carries the same 3dp outline. Saturated fills cannot clear 4.5:1 against pastel
+ * grounds, so the outline is what holds the edge and what contrast is measured on.
  */
-enum class ObjectType(val color: Color) {
-    Apricot(Color(0xFFF5901E)),
-    Pomegranate(Color(0xFFD42B3A)),
-    Grape(Color(0xFF7B3FA0)),
-    Balloon(Color(0xFFE4356E)),
-    Star(Color(0xFFF5C518)),
-    Sheep(Color(0xFFFFFFFF)),
+enum class Fruit(val color: Color, val detail: Color) {
+    Apple(Color(0xFFE03131), Color(0xFF2F9E44)),
+    Orange(Color(0xFFF5901E), Color(0xFF2F9E44)),
+    Banana(Color(0xFFF2B705), Color(0xFF8A6D3B)),
+    Pear(Color(0xFF94C11F), Color(0xFF6B8E13)),
+    Strawberry(Color(0xFFE8352E), Color(0xFF2F9E44)),
+    Grapes(Color(0xFF7B3FA0), Color(0xFF2F9E44)),
     ;
 
     val outline: Color get() = OutlineColor

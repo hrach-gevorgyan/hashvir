@@ -91,6 +91,8 @@ class SoundBank(context: Context) {
             add("oops_2")
             add("chime")
             for (n in 1..3) add("star_$n")
+            add("intro")
+            add("what_number")
         }
     }
 }

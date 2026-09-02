@@ -38,12 +38,13 @@ fun CountingScreen(
     compact: Boolean,
     onTap: (Int) -> Unit,
     onRoundFinished: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Keyed on the round's identity, not the Round instance: tapping copies the round, and
     // remember(round) would reset the glyph on every tap. Neither count nor object type
     // repeats consecutively, so this key always changes between rounds.
-    var showGlyph by remember(round.count, round.objectType) { mutableStateOf(false) }
+    var showGlyph by remember(round.count, round.fruit) { mutableStateOf(false) }
 
     LaunchedEffect(round.isComplete) {
         if (!round.isComplete) return@LaunchedEffect
@@ -52,6 +53,7 @@ fun CountingScreen(
         sounds.play("total_${round.count}")
         delay(CHIME_DELAY_MS)
         sounds.play("chime")
+        sounds.play("praise_${kotlin.random.Random.nextInt(1, 5)}")
         delay(NEXT_ROUND_DELAY_MS)
         onRoundFinished()
     }
@@ -74,8 +76,8 @@ fun CountingScreen(
         }
 
         for ((index, position) in round.positions.withIndex()) {
-            ObjectSprite(
-                type = round.objectType,
+            FruitSprite(
+                fruit = round.fruit,
                 diameter = diameter,
                 tapped = index in round.tapped,
                 onTap = {
@@ -104,13 +106,19 @@ fun CountingScreen(
             }
         }
 
-        // Still and minimised while objects are tappable; she only comes up at the boundary.
         PouyPouy(
-            state = if (showGlyph) HelperState.Happy else HelperState.Still,
+            state = if (showGlyph) HelperState.Happy else HelperState.Idle,
             size = maxHeight * if (showGlyph) 0.15f else 0.08f,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(shorter * 0.03f),
+        )
+
+        BackButton(
+            onBack = onBack,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(12.dp),
         )
     }
 }

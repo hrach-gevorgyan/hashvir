@@ -2,9 +2,9 @@ package com.hrach.hashvir
 
 import com.hrach.hashvir.game.nextBackground
 import com.hrach.hashvir.game.nextCount
-import com.hrach.hashvir.game.nextObjectType
+import com.hrach.hashvir.game.nextFruit
 import com.hrach.hashvir.theme.BackgroundTint
-import com.hrach.hashvir.theme.ObjectType
+import com.hrach.hashvir.theme.Fruit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -40,17 +40,17 @@ class RoundGenerationTest {
     }
 
     @Test
-    fun `object type never repeats consecutively`() {
+    fun `fruit never repeats consecutively`() {
         val random = Random(3)
-        var previous: ObjectType? = null
-        val seen = mutableSetOf<ObjectType>()
+        var previous: Fruit? = null
+        val seen = mutableSetOf<Fruit>()
         repeat(2000) {
-            val type = nextObjectType(previous, random)
+            val type = nextFruit(previous, random)
             assertTrue("type repeated", type != previous)
             seen += type
             previous = type
         }
-        assertEquals(ObjectType.entries.toSet(), seen)
+        assertEquals(Fruit.entries.toSet(), seen)
     }
 
     @Test

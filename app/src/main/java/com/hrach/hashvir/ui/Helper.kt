@@ -2,92 +2,185 @@ package com.hrach.hashvir.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.theme.Mouse
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
- * Պույ-պույ. The face the voice comes from, not a companion — tapping her does nothing.
+ * Պույ-պույ Ճստունի, the face the voice comes from.
  *
- * Visible and animating only at a round boundary. While objects are tappable she is
- * [HelperState.Still]: shrunk into a corner and completely motionless, so she never competes
- * with the count.
+ * She is alive the whole time: a slow breath, an occasional blink, and a distinct reaction to
+ * everything the child does. Body is one shape; ears, arm and tail are separate layers so they
+ * move independently.
  *
- * She is soft dove grey throughout and is never more saturated than the countable objects.
+ * She stays soft dove grey and is never more saturated than the fruit.
  */
 enum class HelperState {
-    /** Minimised in a corner during counting. No animation at all. */
-    Still,
+    /** Between things: breathing and blinking, nothing more. */
+    Idle,
 
-    /** Round completion: both ears perk, whole body bounces. */
+    /** Intro: one arm up, waving. */
+    Waving,
+
+    /** A question is on screen: ears forward, leaning in. */
+    Thinking,
+
+    /** Right answer: three hops, ears flying, arm up. */
     Happy,
 
-    /** Start of a recognition round: ears rotate forward, slight lean in. */
-    Asking,
+    /** Wrong answer: a slow head shake and drooping ears. Never harsh. */
+    Sad,
+
+    /** Pointing at what she should look at. */
+    Suggesting,
 }
 
 @Composable
 fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
-    val bounce = remember { Animatable(1f) }
+    val hop = remember { Animatable(0f) }
     val earLift = remember { Animatable(0f) }
     val lean = remember { Animatable(0f) }
+    val arm = remember { Animatable(0f) }
+    val shake = remember { Animatable(0f) }
+
+    // Always breathing, always blinking, so she never looks like a frozen picture.
+    val ambient = rememberInfiniteTransition(label = "ambient")
+    val breath by ambient.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(2200, easing = LinearEasing), RepeatMode.Restart),
+        label = "breath",
+    )
+    val blink by ambient.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(4200, easing = LinearEasing), RepeatMode.Restart),
+        label = "blink",
+    )
 
     LaunchedEffect(state) {
         when (state) {
-            HelperState.Still -> {
-                bounce.snapTo(1f)
-                earLift.snapTo(0f)
-                lean.snapTo(0f)
+            HelperState.Idle -> {
+                earLift.animateTo(0f, tween(200))
+                lean.animateTo(0f, tween(200))
+                arm.animateTo(0f, tween(200))
+                shake.snapTo(0f)
+                hop.animateTo(0f, tween(200))
             }
 
-            HelperState.Happy -> {
-                lean.animateTo(0f, tween(200))
-                earLift.animateTo(1f, spring(stiffness = Spring.StiffnessLow))
-                bounce.animateTo(
+            HelperState.Waving -> {
+                lean.animateTo(0f, tween(150))
+                earLift.animateTo(0.5f, tween(250))
+                arm.animateTo(
                     1f,
-                    spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                    initialVelocity = 6f,
+                    infiniteRepeatable(tween(420, easing = FastOutSlowInEasing), RepeatMode.Reverse),
                 )
             }
 
-            HelperState.Asking -> {
+            HelperState.Thinking -> {
+                arm.animateTo(0.45f, tween(300, easing = FastOutSlowInEasing))
                 earLift.animateTo(-0.8f, tween(300, easing = FastOutSlowInEasing))
                 lean.animateTo(1f, tween(300, easing = FastOutSlowInEasing))
+            }
+
+            HelperState.Happy -> {
+                lean.animateTo(0f, tween(120))
+                arm.animateTo(0.8f, tween(150))
+                earLift.animateTo(1f, spring(stiffness = Spring.StiffnessLow))
+                // Three hops, each smaller than the last.
+                hop.animateTo(
+                    0f,
+                    keyframes {
+                        durationMillis = 900
+                        0f at 0
+                        -1f at 150
+                        0f at 300
+                        -0.7f at 450
+                        0f at 580
+                        -0.4f at 700
+                        0f at 800
+                    },
+                )
+                arm.animateTo(0f, tween(200))
+            }
+
+            HelperState.Sad -> {
+                arm.animateTo(0f, tween(150))
+                earLift.animateTo(-1f, tween(250))
+                lean.animateTo(0f, tween(150))
+                // A slow head shake, not a buzz.
+                shake.animateTo(
+                    0f,
+                    keyframes {
+                        durationMillis = 700
+                        0f at 0
+                        -1f at 120
+                        1f at 290
+                        -1f at 460
+                        0f at 700
+                    },
+                )
+            }
+
+            HelperState.Suggesting -> {
+                earLift.animateTo(0.6f, tween(250))
+                lean.animateTo(0.5f, tween(250))
+                arm.animateTo(
+                    1f,
+                    infiniteRepeatable(tween(700, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+                )
             }
         }
     }
 
     Canvas(modifier.size(size)) {
-        rotate(degrees = 7f * lean.value, pivot = Offset(this.size.width / 2f, this.size.height)) {
-            drawMouse(bounce.value, earLift.value)
+        val breathScale = 1f + 0.022f * sin(breath * 2f * Math.PI.toFloat())
+        val eyesShut = blink > 0.96f
+        val hopPx = hop.value * this.size.minDimension * 0.13f
+
+        translate(0f, hopPx) {
+            rotate(
+                degrees = 7f * lean.value + 9f * shake.value,
+                pivot = Offset(this.size.width / 2f, this.size.height),
+            ) {
+                drawMouse(breathScale, earLift.value, arm.value, eyesShut)
+            }
         }
     }
 }
 
-/**
- * Body is one static shape; ears and tail are separate layers and carry all the movement.
- * Drawn as paths rather than a res/drawable vector so those layers can animate independently.
- */
-private fun DrawScope.drawMouse(bounce: Float, earLift: Float) {
+private fun DrawScope.drawMouse(breath: Float, earLift: Float, arm: Float, eyesShut: Boolean) {
     val s = size.minDimension
     val cx = size.width / 2f
 
-    // The ears are the character — a mouse silhouette without big ears reads as a blob.
+    // The ears are the character: a mouse silhouette without big ears reads as a blob.
     val earRadius = s * 0.22f
     val earY = s * 0.26f - s * 0.06f * earLift
     val earSpread = s * 0.26f + s * 0.02f * earLift
@@ -101,34 +194,51 @@ private fun DrawScope.drawMouse(bounce: Float, earLift: Float) {
     // Tail: thin and curled, never below 2dp or it disappears on a pastel ground.
     val tail = Path().apply {
         moveTo(cx + s * 0.24f, s * 0.86f)
-        cubicTo(
-            cx + s * 0.48f, s * 0.92f,
-            cx + s * 0.46f, s * 0.58f,
-            cx + s * 0.30f, s * 0.62f,
-        )
+        cubicTo(cx + s * 0.48f, s * 0.92f, cx + s * 0.46f, s * 0.58f, cx + s * 0.30f, s * 0.62f)
     }
     drawPath(tail, Mouse.Body, style = Stroke(width = maxOf(2.dp.toPx(), s * 0.035f)))
 
-    // Body: one static sitting shape, scaled by the bounce.
-    val bodyW = s * 0.62f * bounce
-    val bodyH = s * 0.60f * bounce
+    val bodyW = s * 0.62f * breath
+    val bodyH = s * 0.60f * breath
     drawOval(
         color = Mouse.Body,
         topLeft = Offset(cx - bodyW / 2f, s * 0.94f - bodyH),
         size = Size(bodyW, bodyH),
     )
 
-    val headR = s * 0.26f * bounce
+    // Arm: waves, points, or rests depending on the state.
+    if (arm > 0.01f) {
+        val shoulder = Offset(cx + s * 0.24f, s * 0.62f)
+        val reach = s * 0.26f
+        val angle = (-70f - 50f * arm) * (Math.PI / 180f).toFloat()
+        val paw = Offset(shoulder.x + reach * cos(angle), shoulder.y + reach * sin(angle))
+        drawLine(Mouse.Body, shoulder, paw, strokeWidth = s * 0.09f, cap = StrokeCap.Round)
+        drawCircle(Mouse.Body, radius = s * 0.06f, center = paw)
+    }
+
+    val headR = s * 0.26f * breath
     val headY = s * 0.42f
     drawCircle(Mouse.Body, radius = headR, center = Offset(cx, headY))
 
     val eyeY = headY - headR * 0.10f
     for (side in listOf(-1f, 1f)) {
-        drawCircle(
-            Mouse.Detail,
-            radius = s * 0.035f,
-            center = Offset(cx + side * headR * 0.42f, eyeY),
-        )
+        val ex = cx + side * headR * 0.42f
+        if (eyesShut) {
+            drawLine(
+                Mouse.Detail,
+                Offset(ex - s * 0.035f, eyeY),
+                Offset(ex + s * 0.035f, eyeY),
+                strokeWidth = s * 0.022f,
+                cap = StrokeCap.Round,
+            )
+        } else {
+            drawCircle(Mouse.Detail, radius = s * 0.035f, center = Offset(ex, eyeY))
+            drawCircle(
+                Color.White,
+                radius = s * 0.013f,
+                center = Offset(ex + s * 0.012f, eyeY - s * 0.012f),
+            )
+        }
     }
     drawCircle(Mouse.Ear, radius = s * 0.045f, center = Offset(cx, headY + headR * 0.55f))
 }

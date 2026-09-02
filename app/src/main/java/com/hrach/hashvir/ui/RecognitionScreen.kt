@@ -1,8 +1,9 @@
 package com.hrach.hashvir.ui
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,43 +31,51 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.hrach.hashvir.BuildConfig
+import androidx.compose.ui.unit.sp
 import com.hrach.hashvir.audio.SoundBank
-import com.hrach.hashvir.game.Layout
 import com.hrach.hashvir.game.RecognitionRound
+import com.hrach.hashvir.game.numberWord
+import com.hrach.hashvir.theme.Armenian
 import com.hrach.hashvir.theme.BackgroundTint
 import com.hrach.hashvir.theme.Feedback
+import com.hrach.hashvir.theme.Ink
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-private const val CARD_GAP_DP = 10
+private const val CARD_GAP_DP = 12
 private const val SHAKE_DP = 8
 private const val SHAKE_MS = 200
-private const val PRAISE_TO_NEXT_MS = 1500L
+private const val PRAISE_TO_NEXT_MS = 1600L
 
 /**
- * «Ո՞րն է X-ը» — Պույ-պույ asks, three cards answer.
+ * Գուշակել — «Ո՞րն է X-ը». Four cards in a two-by-two grid, one of them right.
  *
- * A wrong tap is not a failure: the card wobbles amber, she hears a soft "hmm", and the cards
- * stay exactly where they are so she can try again. Nothing is taken away and nothing is scored.
+ * A wrong tap is not a failure: the card wobbles amber, Պույ-պույ shakes her head, and every
+ * card stays exactly where it is so she can try again. Nothing is scored, nothing disappears.
  */
 @Composable
 fun RecognitionScreen(
     round: RecognitionRound,
     sounds: SoundBank,
     onRoundFinished: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var solvedAt by remember(round) { mutableStateOf<Offset?>(null) }
+    var wrongAt by remember(round) { mutableStateOf(0) }
 
     LaunchedEffect(round) {
+        delay(200)
         sounds.play("ask_${round.answer}")
     }
 
@@ -83,56 +94,67 @@ fun RecognitionScreen(
         val density = LocalDensity.current
         val screenHeight = maxHeight
         val gap = CARD_GAP_DP.dp
-        val cardWidth = (maxWidth - gap * 4) / 3
-        // The wobble is specified in dp, so it has to be converted, not hardcoded in pixels.
+        val cardWidth = (maxWidth - gap * 3) / 2
+        val cardHeight = minOf(cardWidth, (screenHeight * 0.62f - gap) / 2)
         val shakePx = with(density) { SHAKE_DP.dp.toPx() }
-        val cardHeight = maxOf(cardWidth * 1.3f, Layout.Floor)
 
-        if (BuildConfig.DEBUG && cardWidth < Layout.Floor) {
-            Log.w(
-                "Layout",
-                "recognition card ${cardWidth.value.toInt()}dp wide is below the " +
-                    "${Layout.Floor.value.toInt()}dp floor in ${maxWidth.value.toInt()}dp",
-            )
-        }
-
-        Row(
+        Column(
             Modifier
-                .fillMaxWidth()
                 .align(Alignment.Center)
                 .padding(horizontal = gap),
-            horizontalArrangement = Arrangement.spacedBy(gap),
+            verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            round.choices.forEachIndexed { index, choice ->
-                val centre = with(density) {
-                    Offset(
-                        (gap + (cardWidth + gap) * index + cardWidth / 2f).toPx(),
-                        (screenHeight / 2f).toPx(),
-                    )
+            for (row in 0 until 2) {
+                Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
+                    for (column in 0 until 2) {
+                        val index = row * 2 + column
+                        val choice = round.choices[index]
+                        val centre = with(density) {
+                            Offset(
+                                (gap + (cardWidth + gap) * column + cardWidth / 2f).toPx(),
+                                (screenHeight / 2f - cardHeight / 2f - gap / 2f +
+                                    (cardHeight + gap) * row).toPx(),
+                            )
+                        }
+                        ChoiceCard(
+                            choice = choice,
+                            correct = choice == round.answer,
+                            solved = solvedAt != null,
+                            glyphHeight = cardHeight * 0.44f,
+                            shakeDistance = shakePx,
+                            onCorrect = { solvedAt = centre },
+                            onWrong = {
+                                sounds.play("oops_${Random.nextInt(1, 3)}")
+                                wrongAt += 1
+                            },
+                            modifier = Modifier
+                                .width(cardWidth)
+                                .height(cardHeight),
+                        )
+                    }
                 }
-                ChoiceCard(
-                    choice = choice,
-                    correct = choice == round.answer,
-                    solved = solvedAt != null,
-                    sounds = sounds,
-                    glyphHeight = cardHeight * 0.45f,
-                    shakeDistance = shakePx,
-                    onSolved = { solvedAt = centre },
-                    modifier = Modifier
-                        .width(cardWidth)
-                        .height(cardHeight),
-                )
             }
         }
 
         solvedAt?.let { Confetti(origin = it) }
 
         PouyPouy(
-            state = if (solvedAt == null) HelperState.Asking else HelperState.Happy,
+            state = when {
+                solvedAt != null -> HelperState.Happy
+                wrongAt > 0 -> HelperState.Sad
+                else -> HelperState.Thinking
+            },
             size = maxHeight * 0.15f,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(maxWidth * 0.04f),
+                .padding(12.dp),
+        )
+
+        BackButton(
+            onBack = onBack,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(12.dp),
         )
     }
 }
@@ -142,37 +164,64 @@ private fun ChoiceCard(
     choice: Int,
     correct: Boolean,
     solved: Boolean,
-    sounds: SoundBank,
     glyphHeight: Dp,
     shakeDistance: Float,
-    onSolved: () -> Unit,
+    onCorrect: () -> Unit,
+    onWrong: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val shake = remember { Animatable(0f) }
     val wrongTint = remember { Animatable(0f) }
+    val pop = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(solved, correct) {
+        if (solved && correct) {
+            pop.animateTo(1.12f, tween(140))
+            pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
+        }
+    }
 
     Box(
         modifier
             .offset { IntOffset(shake.value.roundToInt(), 0) }
-            .clip(RoundedCornerShape(20.dp))
+            .scale(pop.value)
+            .clip(RoundedCornerShape(26.dp))
             .background(BackgroundTint.Paper.color)
             .background(Feedback.Neutral.copy(alpha = 0.28f * wrongTint.value))
+            .background(
+                if (solved && correct) Feedback.Positive.copy(alpha = 0.18f) else Color.Transparent
+            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 enabled = !solved,
             ) {
                 if (correct) {
-                    onSolved()
+                    onCorrect()
                 } else {
-                    sounds.play("oops_${Random.nextInt(1, 3)}")
+                    onWrong()
                     scope.launch { wobble(shake, wrongTint, shakeDistance) }
                 }
             },
         contentAlignment = Alignment.Center,
     ) {
-        NumberGlyph(count = choice, glyphHeight = glyphHeight)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = choice.toString(),
+                color = Ink.Primary,
+                fontFamily = Armenian,
+                fontWeight = FontWeight.Black,
+                fontSize = glyphHeight.value.sp,
+            )
+            Text(
+                text = numberWord(choice),
+                color = Ink.Primary,
+                fontFamily = Armenian,
+                fontWeight = FontWeight.Black,
+                fontSize = (glyphHeight.value * 0.26f).sp,
+            )
+        }
     }
 }
 

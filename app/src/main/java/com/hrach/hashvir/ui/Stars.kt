@@ -16,12 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.audio.SoundBank
-import com.hrach.hashvir.theme.ObjectType
+import com.hrach.hashvir.theme.Fruit
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -71,9 +72,9 @@ private fun TappableStar(index: Int, sounds: SoundBank, starSize: Dp) {
             }
     ) {
         val path = starPath(size.minDimension / 2f, center = Offset(size.width / 2f, size.height / 2f))
-        val stroke = ObjectType.OutlineWidthDp.dp.toPx()
-        drawPath(path, ObjectType.Star.color)
-        drawPath(path, ObjectType.Star.outline, style = Stroke(width = stroke))
+        val stroke = Fruit.OutlineWidthDp.dp.toPx()
+        drawPath(path, Color(0xFFF5C518))
+        drawPath(path, Fruit.OutlineColor, style = Stroke(width = stroke))
     }
 }
 

@@ -24,7 +24,7 @@ fun contrastRatio(a: Color, b: Color): Double {
  * The colour that has to hold the object's edge against the background. Objects are read
  * by their outline, so that is what must clear 4.5:1.
  */
-val ObjectType.edgeColor: Color get() = outline
+val Fruit.edgeColor: Color get() = outline
 
-fun ObjectType.contrastOn(tint: BackgroundTint): Double = contrastRatio(edgeColor, tint.color)
+fun Fruit.contrastOn(tint: BackgroundTint): Double = contrastRatio(edgeColor, tint.color)
 

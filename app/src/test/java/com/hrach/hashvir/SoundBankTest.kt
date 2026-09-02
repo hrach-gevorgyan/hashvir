@@ -8,8 +8,8 @@ import org.junit.Test
 class SoundBankTest {
 
     @Test
-    fun `clip list matches the 40 clips in AUDIO md`() {
-        assertEquals(40, SoundBank.ALL.size)
+    fun `clip list matches the clips in AUDIO md`() {
+        assertEquals(42, SoundBank.ALL.size)
         assertEquals(SoundBank.ALL.size, SoundBank.ALL.toSet().size)
     }
 
