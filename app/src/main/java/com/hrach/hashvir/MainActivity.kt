@@ -64,6 +64,7 @@ private fun App(compact: Boolean, game: GameViewModel = viewModel()) {
 
     var screen by remember { mutableStateOf<Screen>(Screen.Intro) }
     val toMenu = {
+        sounds.stopAll()
         game.reset()
         screen = Screen.Menu
     }

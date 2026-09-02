@@ -33,6 +33,9 @@ class SoundBank(context: Context) {
     /** Clip name -> SoundPool sound id. Absent means the file is not in res/raw. */
     private val sounds = mutableMapOf<String, Int>()
 
+    /** Streams currently playing, so a long clip can be cut short when a screen is left. */
+    private val playing = mutableListOf<Int>()
+
     /** Sound ids SoundPool has finished decoding. Playing before this is silent. */
     private val loaded = mutableSetOf<Int>()
 
@@ -74,7 +77,11 @@ class SoundBank(context: Context) {
             Log.w(TAG, "play($name): still decoding")
             return
         }
-        soundPool.play(id, 1f, 1f, 1, 0, 1f)
+        val stream = soundPool.play(id, 1f, 1f, 1, 0, 1f)
+        if (stream != 0) {
+            playing += stream
+            if (playing.size > 8) playing.removeAt(0)
+        }
 
         val spoken = speechLengthMs(name)
         if (spoken > 0) {
@@ -84,15 +91,22 @@ class SoundBank(context: Context) {
 
     /** Zero for the chime and the star notes: those are sounds, not speech. */
     private fun speechLengthMs(name: String): Long = when {
-        name == "intro" -> 7000
-        name == "what_number" -> 1350
-        name == "how_many" -> 2000
-        name.startsWith("total_") -> 1550
-        name.startsWith("ask_") -> 1250
-        name.startsWith("praise_") -> 1100
-        name.startsWith("num_") -> 950
-        name.startsWith("oops_") -> 900
+        name == "intro" -> 6850
+        name == "what_number" -> 1250
+        name == "how_many" -> 1900
+        name.startsWith("total_") -> 1470
+        name.startsWith("ask_") -> 1160
+        name.startsWith("praise_") -> 1000
+        name.startsWith("num_") -> 860
+        name.startsWith("oops_") -> 810
         else -> 0
+    }
+
+    /** Cuts off whatever is playing — skipping the intro has to stop the intro. */
+    fun stopAll() {
+        for (stream in playing) soundPool.stop(stream)
+        playing.clear()
+        speakingUntil = 0L
     }
 
     fun release() {
@@ -125,12 +139,17 @@ class SoundBank(context: Context) {
  */
 @androidx.compose.runtime.Composable
 fun rememberSpeaking(sounds: SoundBank): Boolean {
-    var now by androidx.compose.runtime.remember { androidx.compose.runtime.mutableLongStateOf(0L) }
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        while (true) {
-            androidx.compose.runtime.withFrameNanos { }
-            now = android.os.SystemClock.uptimeMillis()
-        }
+    var speaking by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(false)
     }
-    return now < sounds.speakingUntil
+    // Keyed on the end time, so the loop only runs while a clip is actually playing and
+    // stops the moment it finishes rather than polling for the life of the screen.
+    androidx.compose.runtime.LaunchedEffect(sounds.speakingUntil) {
+        while (android.os.SystemClock.uptimeMillis() < sounds.speakingUntil) {
+            speaking = true
+            androidx.compose.runtime.withFrameNanos { }
+        }
+        speaking = false
+    }
+    return speaking
 }

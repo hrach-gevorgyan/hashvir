@@ -1,6 +1,7 @@
 # Audio recording list — 43 clips
 
-Drop finished files in `app/src/main/res/raw/`.
+Drop finished files in `app/src/main/res/raw/`, then run `python tools/normalize_audio.py`,
+which trims the silence, converts to mono OGG and puts the whole set at -16 LUFS.
 
 **File requirements**
 - Format **OGG Vorbis**, filename exactly as in the `File` column plus `.ogg` (e.g. `num_1.ogg`).

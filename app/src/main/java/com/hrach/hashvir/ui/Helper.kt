@@ -34,6 +34,7 @@ import com.hrach.hashvir.theme.Mouse
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlinx.coroutines.delay
 
 /**
  * Պույ-պույ Ճստունի.
@@ -80,6 +81,7 @@ fun PouyPouy(
     val earLift = remember { Animatable(0f) }
     val lean = remember { Animatable(0f) }
     val arm = remember { Animatable(0f) }
+    val leftArm = remember { Animatable(0f) }
     val shake = remember { Animatable(0f) }
     val smile = remember { Animatable(0.62f) }
     val lookX = remember { Animatable(0f) }
@@ -121,6 +123,7 @@ fun PouyPouy(
                 earLift.animateTo(0f, tween(250))
                 lean.animateTo(0f, tween(250))
                 arm.animateTo(0f, tween(250))
+                leftArm.animateTo(0f, tween(250))
                 smile.animateTo(0.62f, tween(250))
                 lookX.animateTo(0f, tween(400))
                 lookY.animateTo(0f, tween(400))
@@ -158,6 +161,8 @@ fun PouyPouy(
                 lean.animateTo(0f, tween(120))
                 smile.animateTo(1f, tween(150))
                 earLift.animateTo(1f, spring(stiffness = Spring.StiffnessLow))
+                // Both paws in the air when she is pleased.
+                leftArm.animateTo(1f, tween(150))
                 arm.animateTo(1f, tween(150))
                 eyesShut.animateTo(1f, tween(150))
                 lookY.animateTo(0f, tween(150))
@@ -181,6 +186,7 @@ fun PouyPouy(
             }
 
             HelperState.Sad -> {
+                leftArm.animateTo(0f, tween(150))
                 arm.animateTo(0f, tween(150))
                 earLift.animateTo(-1f, tween(300))
                 lean.animateTo(0f, tween(150))
@@ -202,6 +208,7 @@ fun PouyPouy(
             }
 
             HelperState.Walking -> {
+                leftArm.animateTo(0f, tween(200))
                 eyesShut.animateTo(0f, tween(150))
                 smile.animateTo(0.7f, tween(250))
                 earLift.animateTo(0.25f, tween(250))
@@ -221,6 +228,22 @@ fun PouyPouy(
                     infiniteRepeatable(tween(640, easing = FastOutSlowInEasing), RepeatMode.Reverse),
                 )
             }
+        }
+    }
+
+    // Every so often she gestures with one paw or the other, so a long stretch of listening
+    // never looks like a frozen picture.
+    LaunchedEffect(state, speaking) {
+        if (state != HelperState.Idle && !speaking) return@LaunchedEffect
+        var useLeft = false
+        while (true) {
+            delay(1800L + (0..2200).random())
+            val hand = if (useLeft) leftArm else arm
+            useLeft = !useLeft
+            hand.animateTo(0.85f, tween(260, easing = FastOutSlowInEasing))
+            hand.animateTo(0.45f, tween(200))
+            hand.animateTo(0.85f, tween(200))
+            hand.animateTo(0f, tween(320, easing = FastOutSlowInEasing))
         }
     }
 
@@ -286,6 +309,10 @@ fun PouyPouy(
                         tailSway = tail,
                         walkPhase = walkPhase,
                         mouthOpen = mouthOpen,
+                        leftArm = leftArm.value,
+                        // Talking lifts the corners of her mouth further: she sounds pleased,
+                        // so she should look it.
+                        extraSmile = if (speaking) 0.25f else 0f,
                     )
                 }
             }
@@ -308,6 +335,8 @@ private fun DrawScope.drawMouse(
     tailSway: Float,
     walkPhase: Float,
     mouthOpen: Float,
+    leftArm: Float,
+    extraSmile: Float,
 ) {
     val s = size.minDimension
     val cx = size.width / 2f
@@ -450,7 +479,12 @@ private fun DrawScope.drawMouse(
     } else {
         val mouth = Path().apply {
             moveTo(cx - mouthW, mouthY)
-            quadraticBezierTo(cx, mouthY + smile * headR * 0.30f, cx + mouthW, mouthY)
+            quadraticBezierTo(
+                cx,
+                mouthY + (smile + extraSmile).coerceAtMost(1.2f) * headR * 0.30f,
+                cx + mouthW,
+                mouthY,
+            )
         }
         drawPath(mouth, Mouse.Detail, style = Stroke(width = s * 0.016f, cap = StrokeCap.Round))
     }
@@ -486,14 +520,23 @@ private fun DrawScope.drawMouse(
 
     // Arms last, so the wave is never buried behind the head.
     val shoulderY = ground - bodyH * 0.62f
-    // Resting left arm.
-    drawLine(
-        Fur,
-        Offset(cx - bodyW * 0.40f, shoulderY),
-        Offset(cx - bodyW * 0.52f, shoulderY + s * 0.10f),
-        strokeWidth = s * 0.075f,
-        cap = StrokeCap.Round,
-    )
+    if (leftArm > 0.01f) {
+        val shoulder = Offset(cx - bodyW * 0.40f, shoulderY)
+        val reach = s * 0.28f
+        val angle = (180f + 30f + 55f * leftArm) * (Math.PI / 180f).toFloat()
+        val paw = Offset(shoulder.x + reach * cos(angle), shoulder.y + reach * sin(angle))
+        drawLine(Fur, shoulder, paw, strokeWidth = s * 0.078f, cap = StrokeCap.Round)
+        drawCircle(Fur, radius = s * 0.055f, center = paw)
+        drawCircle(Blush, radius = s * 0.028f, center = paw)
+    } else {
+        drawLine(
+            Fur,
+            Offset(cx - bodyW * 0.40f, shoulderY),
+            Offset(cx - bodyW * 0.52f, shoulderY + s * 0.10f),
+            strokeWidth = s * 0.075f,
+            cap = StrokeCap.Round,
+        )
+    }
     if (arm > 0.01f) {
         val shoulder = Offset(cx + bodyW * 0.40f, shoulderY)
         val reach = s * 0.28f

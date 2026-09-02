@@ -31,7 +31,7 @@ import com.hrach.hashvir.theme.BackgroundTint
 import kotlinx.coroutines.delay
 
 /** Roughly the length of the greeting, plus a beat to look at her. */
-private const val INTRO_MS = 8000L
+private const val INTRO_MS = 7600L
 
 /**
  * Պույ-պույ waves and introduces herself.
@@ -47,6 +47,7 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
         entrance.animateTo(1f, tween(400, easing = FastOutSlowInEasing))
         sounds.play("intro")
         delay(INTRO_MS)
+        sounds.stopAll()
         onDone()
     }
 
@@ -58,8 +59,11 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = onDone,
-            )
+            ) {
+                // Tapping through the greeting has to silence it, or she talks over the menu.
+                sounds.stopAll()
+                onDone()
+            }
     ) {
         val mouseSize = minOf(maxWidth, maxHeight) * 0.52f
 

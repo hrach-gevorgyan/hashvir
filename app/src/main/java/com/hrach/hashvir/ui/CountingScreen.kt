@@ -46,16 +46,16 @@ private const val GATHER_DELAY_MS = 1000L
  *
  * QUESTION_MS covers the clip; THINKING_MS is the silence after it, which is hers.
  */
-private const val QUESTION_MS = 2050L
+private const val QUESTION_MS = 1950L
 private const val THINKING_MS = 3000L
 
 /**
- * Round-end audio runs strictly one clip at a time. Measured lengths: total up to 1.50s,
- * praise up to 1.04s, chime 1.10s.
+ * Round-end audio runs strictly one clip at a time. Measured after normalization: total up to
+ * 1.42s, praise 0.94s, chime 0.86s.
  */
-private const val AFTER_TOTAL_MS = 1700L
-private const val AFTER_PRAISE_MS = 1250L
-private const val AFTER_CHIME_MS = 1250L
+private const val AFTER_TOTAL_MS = 1650L
+private const val AFTER_PRAISE_MS = 1150L
+private const val AFTER_CHIME_MS = 1100L
 
 private enum class Phase { Counting, Asking, Answered }
 
