@@ -32,8 +32,6 @@ class SoundBank(context: Context) {
     /** Sound ids SoundPool has finished decoding. Playing before this is silent. */
     private val loaded = mutableSetOf<Int>()
 
-    private var muted = false
-    private var volume = 1f
 
     init {
         soundPool.setOnLoadCompleteListener { _, sampleId, status ->
@@ -53,7 +51,6 @@ class SoundBank(context: Context) {
     }
 
     fun play(name: String) {
-        if (muted) return
         val id = sounds[name]
         if (id == null) {
             Log.w(TAG, "play($name): not loaded")
@@ -63,15 +60,7 @@ class SoundBank(context: Context) {
             Log.w(TAG, "play($name): still decoding")
             return
         }
-        soundPool.play(id, volume, volume, 1, 0, 1f)
-    }
-
-    fun setVolume(value: Float) {
-        volume = value.coerceIn(0f, 1f)
-    }
-
-    fun setMuted(value: Boolean) {
-        muted = value
+        soundPool.play(id, 1f, 1f, 1, 0, 1f)
     }
 
     fun release() {

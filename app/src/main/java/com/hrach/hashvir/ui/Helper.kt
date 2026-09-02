@@ -62,6 +62,9 @@ enum class HelperState {
 
     /** Pointing at what she should look at, and looking there herself. */
     Suggesting,
+
+    /** Strolling along the bottom of the screen, legs swinging. */
+    Walking,
 }
 
 @Composable
@@ -92,6 +95,11 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
         -1f, 1f,
         infiniteRepeatable(tween(1900, easing = FastOutSlowInEasing), RepeatMode.Reverse),
         label = "tail",
+    )
+    val step by ambient.animateFloat(
+        0f, 1f,
+        infiniteRepeatable(tween(620, easing = LinearEasing), RepeatMode.Restart),
+        label = "step",
     )
 
     LaunchedEffect(state) {
@@ -181,6 +189,15 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
                 )
             }
 
+            HelperState.Walking -> {
+                eyesShut.animateTo(0f, tween(150))
+                smile.animateTo(0.7f, tween(250))
+                earLift.animateTo(0.25f, tween(250))
+                lean.animateTo(0f, tween(250))
+                arm.animateTo(0f, tween(250))
+                lookY.animateTo(0f, tween(250))
+            }
+
             HelperState.Suggesting -> {
                 eyesShut.animateTo(0f, tween(150))
                 smile.animateTo(0.6f, tween(250))
@@ -224,7 +241,14 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
         val breathe = 1f + 0.020f * sin(breath * 2f * Math.PI.toFloat())
         val autoBlink = blink > 0.965f
         val lidClose = maxOf(eyesShut.value, if (autoBlink) 1f else 0f)
-        val bob = if (state == HelperState.Idle) sin(breath * 2f * Math.PI.toFloat()) * s * 0.006f else 0f
+        val walking = state == HelperState.Walking
+        val walkPhase = if (walking) step else 0f
+        // Walking bounces twice per stride, once for each foot.
+        val bob = when {
+            walking -> -kotlin.math.abs(sin(step * 2f * Math.PI.toFloat())) * s * 0.030f
+            state == HelperState.Idle -> sin(breath * 2f * Math.PI.toFloat()) * s * 0.006f
+            else -> 0f
+        }
 
         translate(0f, hop.value * s * 0.14f + bob) {
             // Squash horizontally and stretch vertically about the feet.
@@ -246,6 +270,7 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
                         lookX = lookX.value,
                         lookY = lookY.value,
                         tailSway = tail,
+                        walkPhase = walkPhase,
                     )
                 }
             }
@@ -266,6 +291,7 @@ private fun DrawScope.drawMouse(
     lookX: Float,
     lookY: Float,
     tailSway: Float,
+    walkPhase: Float,
 ) {
     val s = size.minDimension
     val cx = size.width / 2f
@@ -282,11 +308,15 @@ private fun DrawScope.drawMouse(
     }
     drawPath(tailPath, FurDark, style = Stroke(width = maxOf(2.dp.toPx(), s * 0.032f), cap = StrokeCap.Round))
 
-    // Feet, so she is standing on something rather than floating.
-    for (side in listOf(-1f, 1f)) {
+    // Feet, so she is standing on something rather than floating. While walking they swing
+    // in opposite phase and lift off the ground in turn.
+    for ((index, side) in listOf(-1f, 1f).withIndex()) {
+        val phase = walkPhase * 2f * Math.PI.toFloat() + index * Math.PI.toFloat()
+        val swing = if (walkPhase == 0f) 0f else sin(phase) * s * 0.10f
+        val lift = if (walkPhase == 0f) 0f else maxOf(0f, sin(phase)) * s * 0.045f
         drawOval(
             color = FurDark,
-            topLeft = Offset(cx + side * s * 0.20f - s * 0.09f, ground - s * 0.07f),
+            topLeft = Offset(cx + side * s * 0.18f - s * 0.09f + swing, ground - s * 0.07f - lift),
             size = Size(s * 0.18f, s * 0.10f),
         )
     }

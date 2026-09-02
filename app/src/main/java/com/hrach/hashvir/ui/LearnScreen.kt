@@ -30,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -51,10 +53,9 @@ private val NUMBER_COLORS = listOf(
     Color(0xFF7B3FA0), Color(0xFFE4356E),
 )
 
-/** praise runs to 1.04s and num to 0.88s; nothing here may overlap anything else. */
-private const val AFTER_PRAISE_MS = 1300L
-private const val AFTER_OOPS_MS = 1000L
-private const val AFTER_NUM_MS = 1200L
+/** praise runs to 1.04s and oops to 0.85s; nothing here may overlap anything else. */
+private const val AFTER_PRAISE_MS = 1400L
+private const val AFTER_OOPS_MS = 1100L
 
 /**
  * Սովորել — Պույ-պույ shows a number and asks what it is. The child says it out loud, and the
@@ -87,11 +88,10 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
             }
 
             false -> {
+                // Just the soft "not yet" and a head shake. The number stays on screen and
+                // she gets another go; saying the answer for her would defeat the point.
                 sounds.play("oops_${Random.nextInt(1, 3)}")
                 delay(AFTER_OOPS_MS)
-                // Tell her the answer, then ask the same number again.
-                sounds.play("num_$number")
-                delay(AFTER_NUM_MS)
                 asking += 1
             }
 
@@ -105,6 +105,10 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
             .background(BackgroundTint.Paper.color)
     ) {
         val shorter = minOf(maxWidth, maxHeight)
+        val screenWidth = maxWidth
+        val screenHeight = maxHeight
+
+        Scenery(seed = number, tint = Color(0xFF6B5A7A))
 
         Column(
             Modifier
@@ -136,15 +140,24 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
             }
         }
 
+        if (reaction == true) {
+            Confetti(
+                origin = with(LocalDensity.current) {
+                    Offset((screenWidth / 2f).toPx(), (screenHeight * 0.38f).toPx())
+                }
+            )
+        }
+
+        // Top-right, clear of the two judge buttons at the bottom.
         PouyPouy(
             state = when (reaction) {
                 true -> HelperState.Happy
                 false -> HelperState.Sad
                 null -> HelperState.Thinking
             },
-            size = maxHeight * 0.16f,
+            size = shorter * 0.30f,
             modifier = Modifier
-                .align(Alignment.BottomStart)
+                .align(Alignment.TopEnd)
                 .padding(12.dp),
         )
 

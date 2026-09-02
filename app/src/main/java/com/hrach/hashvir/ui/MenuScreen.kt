@@ -63,12 +63,14 @@ fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(BackgroundTint.Paper.color)
     ) {
-        val cardHeight = maxOf((maxHeight - 220.dp) / 3f, 140.dp)
+        val cardHeight = maxOf((maxHeight - 260.dp) / 3f, 140.dp)
+
+        Scenery(seed = 11, tint = Color(0xFF7B6B57))
 
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         ) {
             for (mode in Mode.entries) {
@@ -76,12 +78,19 @@ fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
             }
         }
 
-        PouyPouy(
-            state = HelperState.Suggesting,
-            size = maxHeight * 0.13f,
+        GroundStrip(
+            tint = Color(0xFF6B8E13),
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(12.dp),
+                .align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .height(52.dp),
+        )
+
+        WalkingHelper(
+            height = 92.dp,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(bottom = 8.dp),
         )
     }
 }

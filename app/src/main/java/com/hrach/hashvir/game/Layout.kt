@@ -59,7 +59,7 @@ object Layout {
      *
      * The percentage from SPEC is a floor, not a target: `max(percentage, dpFloor)`, then
      * capped by what actually fits. On phones the cap usually wins at high counts, which is
-     * what [belowPhoneFloor] reports.
+     * what CountingScreen logs a warning about.
      */
     fun diameter(count: Int, width: Dp, height: Dp, compact: Boolean): Dp {
         val shorter = minOf(width, height)
@@ -76,10 +76,6 @@ object Layout {
         }
         return minOf(wanted, fits)
     }
-
-    /** True when the computed target is under 18mm and the round will be hard to tap. */
-    fun belowPhoneFloor(count: Int, width: Dp, height: Dp, compact: Boolean): Boolean =
-        diameter(count, width, height, compact) < PhoneFloor
 
     /** Largest diameter whose row/column structure fits, with spacing, in the play area. */
     private fun structuredFit(count: Int, width: Dp, height: Dp, compact: Boolean): Dp =

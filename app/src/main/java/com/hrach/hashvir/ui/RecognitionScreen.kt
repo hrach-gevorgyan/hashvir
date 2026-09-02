@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -97,8 +96,10 @@ fun RecognitionScreen(
         val screenHeight = maxHeight
         val gap = CARD_GAP_DP.dp
         val cardWidth = (maxWidth - gap * 3) / 2
-        val cardHeight = minOf(cardWidth, (screenHeight * 0.62f - gap) / 2)
+        val cardHeight = minOf(cardWidth, (screenHeight * 0.66f - gap) / 2)
         val shakePx = with(density) { SHAKE_DP.dp.toPx() }
+
+        Scenery(seed = round.answer, tint = Color(0xFF44607A))
 
         Column(
             Modifier
@@ -122,7 +123,7 @@ fun RecognitionScreen(
                             choice = choice,
                             correct = choice == round.answer,
                             solved = solvedAt != null,
-                            glyphHeight = cardHeight * 0.44f,
+                            glyphHeight = cardHeight * 0.62f,
                             shakeDistance = shakePx,
                             onCorrect = { solvedAt = centre },
                             ruledOut = choice in ruledOut,
@@ -148,9 +149,9 @@ fun RecognitionScreen(
                 wrongAt > 0 -> HelperState.Sad
                 else -> HelperState.Thinking
             },
-            size = maxHeight * 0.20f,
+            size = maxHeight * 0.17f,
             modifier = Modifier
-                .align(Alignment.BottomStart)
+                .align(Alignment.BottomEnd)
                 .padding(12.dp),
         )
 

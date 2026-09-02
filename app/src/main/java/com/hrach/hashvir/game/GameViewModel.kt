@@ -1,7 +1,6 @@
 package com.hrach.hashvir.game
 
 import android.app.Application
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,9 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import com.hrach.hashvir.theme.BackgroundTint
 import com.hrach.hashvir.ui.Mode
 import kotlin.random.Random
-
-private const val PREFS = "hashvir"
-private const val KEY_ROUNDS_COMPLETED = "roundsCompleted"
 
 sealed interface Stage {
     data class Counting(val round: Round) : Stage
@@ -24,12 +20,7 @@ sealed interface Stage {
 
 class GameViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val prefs = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     private val random = Random.Default
-
-    /** Persisted, and never shown to the child. Kept for the parent screen later. */
-    var roundsCompleted: Int = prefs.getInt(KEY_ROUNDS_COMPLETED, 0)
-        private set
 
     var stage by mutableStateOf<Stage?>(null)
         private set
@@ -53,8 +44,6 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onRoundFinished(mode: Mode, width: Dp, height: Dp, compact: Boolean) {
-        roundsCompleted += 1
-        prefs.edit().putInt(KEY_ROUNDS_COMPLETED, roundsCompleted).apply()
         stage = generate(mode, width, height, compact)
     }
 

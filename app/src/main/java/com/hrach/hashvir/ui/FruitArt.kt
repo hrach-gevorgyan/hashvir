@@ -89,19 +89,32 @@ private fun DrawScope.orange(u: Float, fruit: Fruit, stroke: Stroke) {
 }
 
 private fun DrawScope.banana(u: Float, fruit: Fruit, stroke: Stroke) {
+    // A fat crescent: thick through the belly, tapering to both tips, sitting on a diagonal.
     val body = Path().apply {
-        moveTo(16f * u, 20f * u)
-        cubicTo(10f * u, 60f * u, 40f * u, 90f * u, 84f * u, 80f * u)
-        cubicTo(88f * u, 74f * u, 86f * u, 68f * u, 80f * u, 66f * u)
-        cubicTo(48f * u, 70f * u, 26f * u, 50f * u, 28f * u, 22f * u)
-        cubicTo(26f * u, 16f * u, 18f * u, 15f * u, 16f * u, 20f * u)
+        moveTo(22f * u, 14f * u)
+        // Outer edge, sweeping down and right.
+        cubicTo(14f * u, 52f * u, 34f * u, 86f * u, 82f * u, 88f * u)
+        // Right tip.
+        cubicTo(90f * u, 88f * u, 92f * u, 78f * u, 86f * u, 74f * u)
+        // Inner edge, coming back up.
+        cubicTo(50f * u, 70f * u, 32f * u, 46f * u, 36f * u, 18f * u)
+        // Left tip.
+        cubicTo(36f * u, 10f * u, 24f * u, 8f * u, 22f * u, 14f * u)
         close()
     }
     drawPath(body, fruit.color)
     drawPath(body, fruit.outline, style = stroke)
-    // Both tips go brown, the way a real banana does.
-    drawCircle(fruit.detail, radius = 5f * u, center = Offset(18f * u, 19f * u))
-    drawCircle(fruit.detail, radius = 5f * u, center = Offset(84f * u, 76f * u))
+
+    // A soft seam along the inside of the curve gives it volume.
+    val seam = Path().apply {
+        moveTo(30f * u, 24f * u)
+        cubicTo(28f * u, 52f * u, 44f * u, 76f * u, 78f * u, 80f * u)
+    }
+    drawPath(seam, Color(0x33FFFFFF), style = Stroke(width = 6f * u))
+
+    // Browned tips, the way a real banana goes.
+    drawCircle(fruit.detail, radius = 6f * u, center = Offset(23f * u, 13f * u))
+    drawCircle(fruit.detail, radius = 5.5f * u, center = Offset(87f * u, 81f * u))
 }
 
 private fun DrawScope.pear(u: Float, fruit: Fruit, stroke: Stroke) {

@@ -69,6 +69,8 @@ fun CountingScreen(
             .background(round.background.color)
     ) {
         val shorter = minOf(maxWidth, maxHeight)
+        val screenWidth = maxWidth
+        val screenHeight = maxHeight
         val diameter = Layout.diameter(round.count, maxWidth, maxHeight, compact)
 
         if (BuildConfig.DEBUG && diameter < Layout.PhoneFloor) {
@@ -100,6 +102,14 @@ fun CountingScreen(
         }
 
         if (showGlyph) {
+            Confetti(
+                origin = with(androidx.compose.ui.platform.LocalDensity.current) {
+                    androidx.compose.ui.geometry.Offset(
+                        (screenWidth / 2f).toPx(),
+                        (screenHeight * 0.45f).toPx(),
+                    )
+                }
+            )
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
