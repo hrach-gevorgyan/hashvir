@@ -112,13 +112,16 @@ private fun MenuCard(mode: Mode, height: Dp, onPick: (Mode) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        ModeIcon(mode = mode, size = height * 0.62f)
+        ModeIcon(mode = mode, size = height * 0.52f)
         Text(
             text = mode.label,
             color = Ink.Primary,
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
-            fontSize = (height.value * 0.22f).sp,
+            // Գուշակել is the longest word; at any larger size it wraps mid-word.
+            fontSize = (height.value * 0.145f).sp,
+            maxLines = 1,
+            softWrap = false,
         )
     }
 }

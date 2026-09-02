@@ -206,16 +206,6 @@ private fun DrawScope.drawMouse(breath: Float, earLift: Float, arm: Float, eyesS
         size = Size(bodyW, bodyH),
     )
 
-    // Arm: waves, points, or rests depending on the state.
-    if (arm > 0.01f) {
-        val shoulder = Offset(cx + s * 0.24f, s * 0.62f)
-        val reach = s * 0.26f
-        val angle = (-70f - 50f * arm) * (Math.PI / 180f).toFloat()
-        val paw = Offset(shoulder.x + reach * cos(angle), shoulder.y + reach * sin(angle))
-        drawLine(Mouse.Body, shoulder, paw, strokeWidth = s * 0.09f, cap = StrokeCap.Round)
-        drawCircle(Mouse.Body, radius = s * 0.06f, center = paw)
-    }
-
     val headR = s * 0.26f * breath
     val headY = s * 0.42f
     drawCircle(Mouse.Body, radius = headR, center = Offset(cx, headY))
@@ -241,4 +231,15 @@ private fun DrawScope.drawMouse(breath: Float, earLift: Float, arm: Float, eyesS
         }
     }
     drawCircle(Mouse.Ear, radius = s * 0.045f, center = Offset(cx, headY + headR * 0.55f))
+
+    // Arm last, so it is never buried behind the head, and swung clear of it.
+    if (arm > 0.01f) {
+        val shoulder = Offset(cx + s * 0.30f, s * 0.66f)
+        val reach = s * 0.30f
+        val angle = (-35f - 55f * arm) * (Math.PI / 180f).toFloat()
+        val paw = Offset(shoulder.x + reach * cos(angle), shoulder.y + reach * sin(angle))
+        drawLine(Mouse.Body, shoulder, paw, strokeWidth = s * 0.085f, cap = StrokeCap.Round)
+        drawCircle(Mouse.Body, radius = s * 0.058f, center = paw)
+        drawCircle(Mouse.Ear, radius = s * 0.030f, center = paw)
+    }
 }
