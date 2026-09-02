@@ -34,6 +34,7 @@ fun FruitSprite(
     tapped: Boolean,
     onTap: () -> Unit,
     modifier: Modifier = Modifier,
+    dimWhenTapped: Boolean = true,
 ) {
     val scale = remember { Animatable(1f) }
     val wiggle = remember { Animatable(0f) }
@@ -63,9 +64,9 @@ fun FruitSprite(
     Canvas(
         modifier
             .size(diameter)
-            .scale(scale.value)
+            .scale(if (tapped && !dimWhenTapped) 1f else scale.value)
             .rotate(wiggle.value)
-            .alpha(if (tapped) TAPPED_ALPHA else 1f)
+            .alpha(if (tapped && dimWhenTapped) TAPPED_ALPHA else 1f)
             // No ripple: the bounce is the response, and a ripple would out-compete the fill.
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },

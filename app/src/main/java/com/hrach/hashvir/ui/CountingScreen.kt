@@ -1,16 +1,20 @@
 package com.hrach.hashvir.ui
 
+import android.util.Log
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,25 +23,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import android.util.Log
 import com.hrach.hashvir.BuildConfig
 import com.hrach.hashvir.audio.SoundBank
 import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.game.Layout
 import com.hrach.hashvir.game.Round
 import kotlinx.coroutines.delay
+import kotlin.random.Random
 
-/** Beat between the last tap and the numeral, so the count lands before the answer does. */
-private const val GLYPH_DELAY_MS = 400L
+/** Beat between the last tap and the question, so the count settles first. */
+private const val GATHER_DELAY_MS = 400L
+
+/**
+ * How long she gets to answer «Քանի՞ հատ էր» before Պույ-պույ confirms it.
+ *
+ * This is the cardinality step: counting only becomes quantity once the child produces the
+ * last number herself as the answer to how many. The fruit stay on screen, gathered into one
+ * group, for the whole of it.
+ */
+private const val QUESTION_MS = 1600L
+private const val THINKING_MS = 2600L
 
 /**
  * Round-end audio runs strictly one clip at a time. Measured lengths: total up to 1.50s,
- * praise up to 1.04s, chime 1.10s. Three of them 600ms apart played as a pile-up.
+ * praise up to 1.04s, chime 1.10s.
  */
 private const val AFTER_TOTAL_MS = 1700L
 private const val AFTER_PRAISE_MS = 1250L
 private const val AFTER_CHIME_MS = 1250L
+
+private enum class Phase { Counting, Asking, Answered }
 
 @Composable
 fun CountingScreen(
@@ -50,17 +68,24 @@ fun CountingScreen(
     modifier: Modifier = Modifier,
 ) {
     // Keyed on the round's identity, not the Round instance: tapping copies the round, and
-    // remember(round) would reset the glyph on every tap. Neither count nor object type
-    // repeats consecutively, so this key always changes between rounds.
-    var showGlyph by remember(round.count, round.fruit) { mutableStateOf(false) }
+    // remember(round) would reset the phase on every tap. Neither count nor fruit repeats
+    // consecutively, so this key always changes between rounds.
+    var phase by remember(round.count, round.fruit) { mutableStateOf(Phase.Counting) }
 
     LaunchedEffect(round.isComplete) {
         if (!round.isComplete) return@LaunchedEffect
-        delay(GLYPH_DELAY_MS)
-        showGlyph = true
+
+        delay(GATHER_DELAY_MS)
+        phase = Phase.Asking
+        // "How many were there?" — she answers out loud, to herself and to whoever is nearby.
+        sounds.play("how_many")
+        delay(QUESTION_MS + THINKING_MS)
+
+        // Then, and only then, the numeral confirms what she said.
+        phase = Phase.Answered
         sounds.play("total_${round.count}")
         delay(AFTER_TOTAL_MS)
-        sounds.play("praise_${kotlin.random.Random.nextInt(1, 5)}")
+        sounds.play("praise_${Random.nextInt(1, 5)}")
         delay(AFTER_PRAISE_MS)
         sounds.play("chime")
         delay(AFTER_CHIME_MS)
@@ -87,11 +112,33 @@ fun CountingScreen(
             )
         }
 
-        for ((index, position) in round.positions.withIndex()) {
+        Scenery(seed = round.count * 31 + round.fruit.ordinal)
+
+        // Once counted, the fruit shrink and slide into one tidy group near the top: the set
+        // she is being asked about, seen as a whole.
+        val gatheredDiameter = diameter * 0.62f
+        val gathered = remember(round.count, screenWidth, screenHeight, gatheredDiameter) {
+            Layout.gathered(round.count, screenWidth, screenHeight, gatheredDiameter, centreY = 0.32f)
+        }
+        val pull by animateFloatAsState(
+            targetValue = if (phase == Phase.Counting) 0f else 1f,
+            animationSpec = tween(400, easing = FastOutSlowInEasing),
+            label = "gather",
+        )
+
+        for ((index, scattered) in round.positions.withIndex()) {
+            val target = gathered[index]
+            val x = scattered.x + (target.x - scattered.x) * pull
+            val y = scattered.y + (target.y - scattered.y) * pull
+            val size = diameter + (gatheredDiameter - diameter) * pull
+
             FruitSprite(
                 fruit = round.fruit,
-                diameter = diameter,
+                diameter = size,
                 tapped = index in round.tapped,
+                // Gathered fruit are the answer to the question, so they come back to full
+                // strength rather than staying dimmed.
+                dimWhenTapped = phase == Phase.Counting,
                 onTap = {
                     if (index !in round.tapped) {
                         // The number she hears is the one she is on, not a running total.
@@ -100,41 +147,43 @@ fun CountingScreen(
                     }
                 },
                 modifier = Modifier.offset(
-                    x = maxWidth * position.x - diameter / 2,
-                    y = maxHeight * position.y - diameter / 2,
+                    x = maxWidth * x - size / 2,
+                    y = maxHeight * y - size / 2,
                 ),
             )
         }
 
-        if (showGlyph) {
+        if (phase == Phase.Answered) {
             Confetti(
-                origin = with(androidx.compose.ui.platform.LocalDensity.current) {
-                    androidx.compose.ui.geometry.Offset(
-                        (screenWidth / 2f).toPx(),
-                        (screenHeight * 0.45f).toPx(),
-                    )
+                origin = with(LocalDensity.current) {
+                    Offset((screenWidth / 2f).toPx(), (screenHeight * 0.66f).toPx())
                 }
             )
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(bottom = screenHeight * 0.10f),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(shorter * 0.04f),
                 ) {
                     Stars(sounds = sounds, starSize = shorter * 0.13f)
-                    NumberGlyph(count = round.count, glyphHeight = shorter * 0.40f)
+                    NumberGlyph(count = round.count, glyphHeight = shorter * 0.34f)
                 }
             }
         }
 
         PouyPouy(
-            state = when {
-                showGlyph -> HelperState.Happy
-                // She nods along with each fruit as it is counted.
-                round.tapped.isNotEmpty() -> HelperState.Suggesting
-                else -> HelperState.Idle
+            state = when (phase) {
+                // She waits with the child while the answer is being worked out.
+                Phase.Asking -> HelperState.Thinking
+                Phase.Answered -> HelperState.Happy
+                Phase.Counting -> if (round.tapped.isEmpty()) HelperState.Idle else HelperState.Suggesting
             },
             speaking = rememberSpeaking(sounds),
-            size = maxHeight * if (showGlyph) 0.17f else 0.12f,
+            size = maxHeight * if (phase == Phase.Counting) 0.12f else 0.17f,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(shorter * 0.03f),

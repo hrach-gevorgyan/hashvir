@@ -29,6 +29,38 @@ object Layout {
     private fun pitch(diameter: Dp): Dp = diameter * (1f + SpacingRatio)
 
     /**
+     * A tidy cluster for the cardinality question.
+     *
+     * Once the counting is done the fruit are pulled together into even rows, so she sees the
+     * set as one group with one answer rather than as things that were touched in turn.
+     */
+    fun gathered(count: Int, width: Dp, height: Dp, diameter: Dp, centreY: Float): List<Offset> {
+        val columns = minOf(count, 5)
+        val rowSizes = buildList {
+            var left = count
+            while (left > 0) {
+                val take = minOf(columns, left)
+                add(take)
+                left -= take
+            }
+        }
+        val p = diameter * 1.15f
+        val blockHeight = p * (rowSizes.size - 1)
+        val top = height * centreY - blockHeight / 2f
+
+        return buildList {
+            rowSizes.forEachIndexed { rowIndex, inRow ->
+                val rowWidth = p * (inRow - 1)
+                val left = (width - rowWidth) / 2f
+                val y = top + p * rowIndex
+                repeat(inRow) { column ->
+                    add(Offset((left + p * column) / width, y / height))
+                }
+            }
+        }
+    }
+
+    /**
      * Row splits for the structured counts, as specified. 10 is the only one that differs
      * by device. Use [rowsThatFit] for placement — a narrow tablet cannot hold 5 columns.
      */
