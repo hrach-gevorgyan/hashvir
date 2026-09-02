@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import android.util.Log
 import com.hrach.hashvir.BuildConfig
@@ -40,7 +39,6 @@ fun CountingScreen(
     onTap: (Int) -> Unit,
     onRoundFinished: () -> Unit,
     modifier: Modifier = Modifier,
-    debugOverlay: Boolean = false,
 ) {
     // Keyed on the round's identity, not the Round instance: tapping copies the round, and
     // remember(round) would reset the glyph on every tap. Neither count nor object type
@@ -92,10 +90,6 @@ fun CountingScreen(
                     y = maxHeight * position.y - diameter / 2,
                 ),
             )
-        }
-
-        if (debugOverlay) {
-            TargetBoundsOverlay(round, diameter, maxWidth, maxHeight)
         }
 
         if (showGlyph) {
