@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hrach.hashvir.audio.SoundBank
+import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.game.nextCount
 import com.hrach.hashvir.game.numberWord
 import com.hrach.hashvir.theme.Armenian
@@ -112,7 +113,7 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
         val screenWidth = maxWidth
         val screenHeight = maxHeight
 
-        Scenery(seed = number)
+        Scenery(seed = number, strength = 0.35f)
 
         Column(
             Modifier
@@ -159,7 +160,8 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
                 false -> HelperState.Sad
                 null -> HelperState.Thinking
             },
-            size = shorter * 0.30f,
+            size = shorter * 0.32f,
+            speaking = rememberSpeaking(sounds),
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(12.dp),

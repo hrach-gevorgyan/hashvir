@@ -3,7 +3,11 @@ package com.hrach.hashvir.audio
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
+import android.os.SystemClock
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.setValue
 
 private const val TAG = "SoundBank"
 
@@ -50,6 +54,16 @@ class SoundBank(context: Context) {
         Log.i(TAG, "preloaded ${sounds.size} of ${ALL.size} clips")
     }
 
+    /**
+     * When the current speech clip finishes, as device uptime.
+     *
+     * Every word the child hears is Պույ-պույ's, so her mouth has to move while one is
+     * playing. SoundPool cannot report progress, so the length is taken from the measured
+     * table below and the clock does the rest.
+     */
+    var speakingUntil by mutableLongStateOf(0L)
+        private set
+
     fun play(name: String) {
         val id = sounds[name]
         if (id == null) {
@@ -61,6 +75,23 @@ class SoundBank(context: Context) {
             return
         }
         soundPool.play(id, 1f, 1f, 1, 0, 1f)
+
+        val spoken = speechLengthMs(name)
+        if (spoken > 0) {
+            speakingUntil = SystemClock.uptimeMillis() + spoken
+        }
+    }
+
+    /** Zero for the chime and the star notes: those are sounds, not speech. */
+    private fun speechLengthMs(name: String): Long = when {
+        name == "intro" -> 7000
+        name == "what_number" -> 1350
+        name.startsWith("total_") -> 1550
+        name.startsWith("ask_") -> 1250
+        name.startsWith("praise_") -> 1100
+        name.startsWith("num_") -> 950
+        name.startsWith("oops_") -> 900
+        else -> 0
     }
 
     fun release() {
@@ -84,4 +115,20 @@ class SoundBank(context: Context) {
             add("what_number")
         }
     }
+}
+
+/**
+ * True while a speech clip is still playing, recomputed every frame so Պույ-պույ's mouth can
+ * follow it.
+ */
+@androidx.compose.runtime.Composable
+fun rememberSpeaking(sounds: SoundBank): Boolean {
+    var now by androidx.compose.runtime.remember { androidx.compose.runtime.mutableLongStateOf(0L) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) {
+            androidx.compose.runtime.withFrameNanos { }
+            now = android.os.SystemClock.uptimeMillis()
+        }
+    }
+    return now < sounds.speakingUntil
 }

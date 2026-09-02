@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import com.hrach.hashvir.audio.SoundBank
+import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.theme.BackgroundTint
 import kotlinx.coroutines.delay
 
@@ -59,6 +60,7 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
                 state = HelperState.Waving,
                 size = mouseSize,
                 modifier = Modifier.scale(entrance.value),
+                speaking = rememberSpeaking(sounds),
             )
         }
     }

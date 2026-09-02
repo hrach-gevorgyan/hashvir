@@ -44,7 +44,7 @@ import kotlin.random.Random
  * stay the most saturated things on screen.
  */
 @Composable
-fun Scenery(seed: Int, modifier: Modifier = Modifier) {
+fun Scenery(seed: Int, modifier: Modifier = Modifier, strength: Float = 1f) {
     val clouds = remember(seed) {
         val random = Random(seed)
         List(3) {
@@ -63,10 +63,12 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier) {
     Canvas(modifier.fillMaxSize()) {
         val w = size.width
         val h = size.height
+        // Screens that are about one large numeral turn the island down rather than off.
+        fun a(value: Float) = value * strength
 
         // Sun, top corner, barely there.
-        drawCircle(Island.Sun.copy(alpha = 0.30f), radius = w * 0.17f, center = Offset(w * 0.86f, h * 0.07f))
-        drawCircle(Island.Sun.copy(alpha = 0.18f), radius = w * 0.25f, center = Offset(w * 0.86f, h * 0.07f))
+        drawCircle(Island.Sun.copy(alpha = a(0.30f)), radius = w * 0.17f, center = Offset(w * 0.86f, h * 0.07f))
+        drawCircle(Island.Sun.copy(alpha = a(0.18f)), radius = w * 0.25f, center = Offset(w * 0.86f, h * 0.07f))
 
         for ((x, y, scale) in clouds) {
             val cx = x * w
@@ -74,7 +76,7 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier) {
             val r = w * 0.07f * scale
             for ((dx, dy, rs) in listOf(Triple(-0.9f, 0.15f, 0.7f), Triple(0f, 0f, 1f), Triple(0.95f, 0.2f, 0.75f))) {
                 drawCircle(
-                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.42f),
+                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = a(0.42f)),
                     radius = r * rs,
                     center = Offset(cx + dx * r, cy + dy * r),
                 )
@@ -84,7 +86,7 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier) {
         // Sea band across the middle distance, with a lighter shoreline under it.
         val seaTop = h * 0.46f
         drawRect(
-            color = Island.Sea.copy(alpha = 0.16f),
+            color = Island.Sea.copy(alpha = a(0.16f)),
             topLeft = Offset(0f, seaTop),
             size = Size(w, h * 0.12f),
         )
@@ -96,19 +98,19 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier) {
                     moveTo(x, y)
                     quadraticBezierTo(x + w * 0.03f, y - h * 0.010f, x + w * 0.06f, y)
                 }
-                drawPath(wave, Island.SeaDeep.copy(alpha = 0.22f), style = Stroke(width = h * 0.0035f))
+                drawPath(wave, Island.SeaDeep.copy(alpha = a(0.22f)), style = Stroke(width = h * 0.0035f))
                 x += w * 0.13f
             }
         }
 
         // Palm on each side, leaning in from the edges.
-        palm(Offset(w * 0.03f, h * 0.62f), w * 0.30f, lean = -1f)
-        palm(Offset(w * 0.97f, h * 0.56f), w * 0.26f, lean = 1f)
+        palm(Offset(w * 0.03f, h * 0.62f), w * 0.30f, lean = -1f, strength = strength)
+        palm(Offset(w * 0.97f, h * 0.56f), w * 0.26f, lean = 1f, strength = strength)
 
         // Shells and pebbles scattered on the sand.
         for ((point, shade) in shells) {
             drawOval(
-                color = Island.SandDark.copy(alpha = 0.30f + shade * 0.16f),
+                color = Island.SandDark.copy(alpha = a(0.30f + shade * 0.16f)),
                 topLeft = Offset(point.x * w, point.y * h),
                 size = Size(w * (0.014f + shade * 0.018f), w * (0.009f + shade * 0.010f)),
             )
@@ -117,7 +119,7 @@ fun Scenery(seed: Int, modifier: Modifier = Modifier) {
 }
 
 /** One palm: a curved trunk with fronds fanning off the top, and a coconut or two. */
-private fun DrawScope.palm(base: Offset, height: Float, lean: Float) {
+private fun DrawScope.palm(base: Offset, height: Float, lean: Float, strength: Float) {
     val topX = base.x + lean * height * 0.26f
     val topY = base.y - height
 
@@ -136,7 +138,7 @@ private fun DrawScope.palm(base: Offset, height: Float, lean: Float) {
         )
         close()
     }
-    drawPath(trunk, Island.Trunk.copy(alpha = 0.30f))
+    drawPath(trunk, Island.Trunk.copy(alpha = 0.30f * strength))
 
     for (angle in listOf(-115f, -70f, -25f, 20f, 65f)) {
         rotate(degrees = angle * 1f, pivot = Offset(topX, topY)) {
@@ -152,9 +154,9 @@ private fun DrawScope.palm(base: Offset, height: Float, lean: Float) {
                 )
                 close()
             }
-            drawPath(frond, Island.PalmLeaf.copy(alpha = 0.34f))
+            drawPath(frond, Island.PalmLeaf.copy(alpha = 0.34f * strength))
             drawLine(
-                color = Island.PalmDark.copy(alpha = 0.26f),
+                color = Island.PalmDark.copy(alpha = 0.26f * strength),
                 start = Offset(topX, topY),
                 end = Offset(topX + height * 0.50f, topY - height * 0.05f),
                 strokeWidth = height * 0.016f,
@@ -163,8 +165,8 @@ private fun DrawScope.palm(base: Offset, height: Float, lean: Float) {
         }
     }
 
-    drawCircle(Island.CoconutShell.copy(alpha = 0.36f), radius = height * 0.055f, center = Offset(topX - height * 0.05f, topY + height * 0.07f))
-    drawCircle(Island.CoconutShell.copy(alpha = 0.30f), radius = height * 0.048f, center = Offset(topX + height * 0.06f, topY + height * 0.09f))
+    drawCircle(Island.CoconutShell.copy(alpha = 0.36f * strength), radius = height * 0.055f, center = Offset(topX - height * 0.05f, topY + height * 0.07f))
+    drawCircle(Island.CoconutShell.copy(alpha = 0.30f * strength), radius = height * 0.048f, center = Offset(topX + height * 0.06f, topY + height * 0.09f))
 }
 
 /** The coconut of the story: a hairy brown shell with the three dark eyes it really has. */

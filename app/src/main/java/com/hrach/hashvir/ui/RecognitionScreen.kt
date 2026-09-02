@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hrach.hashvir.audio.SoundBank
+import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.game.RecognitionRound
 import com.hrach.hashvir.game.numberWord
 import com.hrach.hashvir.theme.Armenian
@@ -153,7 +154,8 @@ fun RecognitionScreen(
                 wrongAt > 0 -> HelperState.Sad
                 else -> HelperState.Thinking
             },
-            size = maxHeight * 0.17f,
+            size = maxHeight * 0.19f,
+            speaking = rememberSpeaking(sounds),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(12.dp),

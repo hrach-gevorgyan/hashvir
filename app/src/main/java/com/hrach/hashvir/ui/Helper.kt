@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hrach.hashvir.theme.Mouse
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -68,7 +69,12 @@ enum class HelperState {
 }
 
 @Composable
-fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
+fun PouyPouy(
+    state: HelperState,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    speaking: Boolean = false,
+) {
     val hop = remember { Animatable(0f) }
     val squash = remember { Animatable(0f) }
     val earLift = remember { Animatable(0f) }
@@ -100,6 +106,12 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
         0f, 1f,
         infiniteRepeatable(tween(620, easing = LinearEasing), RepeatMode.Restart),
         label = "step",
+    )
+    // Roughly syllable rate: fast enough to read as speech, slow enough not to flutter.
+    val talk by ambient.animateFloat(
+        0f, 1f,
+        infiniteRepeatable(tween(260, easing = LinearEasing), RepeatMode.Restart),
+        label = "talk",
     )
 
     LaunchedEffect(state) {
@@ -241,6 +253,8 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
         val breathe = 1f + 0.020f * sin(breath * 2f * Math.PI.toFloat())
         val autoBlink = blink > 0.965f
         val lidClose = maxOf(eyesShut.value, if (autoBlink) 1f else 0f)
+        // While she is talking the jaw moves and the whole head nods very slightly.
+        val mouthOpen = if (speaking) (0.35f + 0.65f * abs(sin(talk * Math.PI.toFloat()))) else 0f
         val walking = state == HelperState.Walking
         val walkPhase = if (walking) step else 0f
         // Walking bounces twice per stride, once for each foot.
@@ -271,6 +285,7 @@ fun PouyPouy(state: HelperState, size: Dp, modifier: Modifier = Modifier) {
                         lookY = lookY.value,
                         tailSway = tail,
                         walkPhase = walkPhase,
+                        mouthOpen = mouthOpen,
                     )
                 }
             }
@@ -292,6 +307,7 @@ private fun DrawScope.drawMouse(
     lookY: Float,
     tailSway: Float,
     walkPhase: Float,
+    mouthOpen: Float,
 ) {
     val s = size.minDimension
     val cx = size.width / 2f
@@ -327,8 +343,14 @@ private fun DrawScope.drawMouse(
     val earSpread = s * 0.215f + s * 0.025f * earLift
     for (side in listOf(-1f, 1f)) {
         val ex = cx + side * earSpread
+        drawCircle(FurDark, radius = earRadius * 1.03f, center = Offset(ex, earY + earRadius * 0.05f))
         drawCircle(Fur, radius = earRadius, center = Offset(ex, earY))
-        drawCircle(Mouse.Ear, radius = earRadius * 0.60f, center = Offset(ex, earY))
+        drawCircle(Mouse.Ear, radius = earRadius * 0.62f, center = Offset(ex, earY + earRadius * 0.04f))
+        drawCircle(
+            Color(0x33FFFFFF),
+            radius = earRadius * 0.36f,
+            center = Offset(ex - side * earRadius * 0.14f, earY - earRadius * 0.16f),
+        )
     }
 
     // Body: a narrow pear. She is a small thin mouse, not a ball.
@@ -339,11 +361,16 @@ private fun DrawScope.drawMouse(
         topLeft = Offset(cx - bodyW / 2f, ground - bodyH),
         size = Size(bodyW, bodyH),
     )
-    // Lighter belly.
+    // Lighter belly, and a soft shadow where she meets the ground.
     drawOval(
-        color = Color(0x40FFFFFF),
-        topLeft = Offset(cx - bodyW * 0.30f, ground - bodyH * 0.72f),
-        size = Size(bodyW * 0.60f, bodyH * 0.66f),
+        color = Color(0x4DFFFFFF),
+        topLeft = Offset(cx - bodyW * 0.32f, ground - bodyH * 0.70f),
+        size = Size(bodyW * 0.64f, bodyH * 0.64f),
+    )
+    drawOval(
+        color = Color(0x1A3A4454),
+        topLeft = Offset(cx - bodyW * 0.62f, ground - s * 0.035f),
+        size = Size(bodyW * 1.24f, s * 0.055f),
     )
 
     val headR = s * 0.225f * breathe
@@ -379,18 +406,50 @@ private fun DrawScope.drawMouse(
         }
     }
 
+    // Brows: small, and they carry most of the expression.
+    for (side in listOf(-1f, 1f)) {
+        val bx = cx + side * headR * 0.42f
+        val by = headY - headR * 0.52f + (if (smile < 0f) headR * 0.10f else 0f)
+        drawLine(
+            color = Mouse.Detail.copy(alpha = 0.55f),
+            start = Offset(bx - headR * 0.16f, by + side * smile * headR * 0.05f),
+            end = Offset(bx + headR * 0.16f, by - side * smile * headR * 0.05f),
+            strokeWidth = s * 0.014f,
+            cap = StrokeCap.Round,
+        )
+    }
+
     // Nose.
     drawCircle(Color(0xFFE58A9A), radius = headR * 0.13f, center = Offset(cx, muzzleY - headR * 0.06f))
     drawCircle(Color(0x55FFFFFF), radius = headR * 0.045f, center = Offset(cx - headR * 0.04f, muzzleY - headR * 0.10f))
 
-    // Mouth: one curve, from a wide grin to a small frown.
+    // Mouth: a curve from wide grin to small frown, or an open jaw while she is speaking.
     val mouthY = muzzleY + headR * 0.20f
     val mouthW = headR * 0.34f
-    val mouth = Path().apply {
-        moveTo(cx - mouthW, mouthY)
-        quadraticBezierTo(cx, mouthY + smile * headR * 0.30f, cx + mouthW, mouthY)
+    if (mouthOpen > 0.01f) {
+        val open = headR * 0.30f * mouthOpen
+        val jaw = Path().apply {
+            moveTo(cx - mouthW, mouthY)
+            quadraticBezierTo(cx, mouthY + open * 1.7f, cx + mouthW, mouthY)
+            quadraticBezierTo(cx, mouthY - open * 0.28f, cx - mouthW, mouthY)
+            close()
+        }
+        drawPath(jaw, Color(0xFF5B4048))
+        // Tongue, so the open mouth does not read as a hole.
+        val tongue = Path().apply {
+            moveTo(cx - mouthW * 0.52f, mouthY + open * 0.55f)
+            quadraticBezierTo(cx, mouthY + open * 1.55f, cx + mouthW * 0.52f, mouthY + open * 0.55f)
+            quadraticBezierTo(cx, mouthY + open * 0.30f, cx - mouthW * 0.52f, mouthY + open * 0.55f)
+            close()
+        }
+        drawPath(tongue, Color(0xFFE07A8C))
+    } else {
+        val mouth = Path().apply {
+            moveTo(cx - mouthW, mouthY)
+            quadraticBezierTo(cx, mouthY + smile * headR * 0.30f, cx + mouthW, mouthY)
+        }
+        drawPath(mouth, Mouse.Detail, style = Stroke(width = s * 0.016f, cap = StrokeCap.Round))
     }
-    drawPath(mouth, Mouse.Detail, style = Stroke(width = s * 0.016f, cap = StrokeCap.Round))
 
     // Eyes: big, with pupils that actually look somewhere, and lids that close.
     val eyeR = headR * 0.24f

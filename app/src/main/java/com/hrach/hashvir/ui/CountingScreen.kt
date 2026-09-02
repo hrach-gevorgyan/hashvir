@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import android.util.Log
 import com.hrach.hashvir.BuildConfig
 import com.hrach.hashvir.audio.SoundBank
+import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.game.Layout
 import com.hrach.hashvir.game.Round
 import kotlinx.coroutines.delay
@@ -126,8 +127,14 @@ fun CountingScreen(
         }
 
         PouyPouy(
-            state = if (showGlyph) HelperState.Happy else HelperState.Idle,
-            size = maxHeight * if (showGlyph) 0.15f else 0.08f,
+            state = when {
+                showGlyph -> HelperState.Happy
+                // She nods along with each fruit as it is counted.
+                round.tapped.isNotEmpty() -> HelperState.Suggesting
+                else -> HelperState.Idle
+            },
+            speaking = rememberSpeaking(sounds),
+            size = maxHeight * if (showGlyph) 0.17f else 0.12f,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(shorter * 0.03f),
