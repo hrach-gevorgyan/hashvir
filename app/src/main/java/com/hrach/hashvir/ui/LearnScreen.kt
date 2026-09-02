@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hrach.hashvir.audio.SoundBank
+import com.hrach.hashvir.game.nextCount
 import com.hrach.hashvir.game.numberWord
 import com.hrach.hashvir.theme.Armenian
 import com.hrach.hashvir.theme.BackgroundTint
@@ -50,7 +51,10 @@ private val NUMBER_COLORS = listOf(
     Color(0xFF7B3FA0), Color(0xFFE4356E),
 )
 
-private const val REACTION_MS = 1100L
+/** praise runs to 1.04s and num to 0.88s; nothing here may overlap anything else. */
+private const val AFTER_PRAISE_MS = 1300L
+private const val AFTER_OOPS_MS = 1000L
+private const val AFTER_NUM_MS = 1200L
 
 /**
  * Սովորել — Պույ-պույ shows a number and asks what it is. The child says it out loud, and the
@@ -62,7 +66,7 @@ private const val REACTION_MS = 1100L
  */
 @Composable
 fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modifier) {
-    var number by remember { mutableIntStateOf(1) }
+    var number by remember { mutableIntStateOf(Random.nextInt(1, 11)) }
     var reaction by remember { mutableStateOf<Boolean?>(null) }
     var asking by remember { mutableIntStateOf(0) }
 
@@ -77,16 +81,17 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
         when (reaction) {
             true -> {
                 sounds.play("praise_${Random.nextInt(1, 5)}")
-                delay(REACTION_MS)
-                number = if (number == 10) 1 else number + 1
+                delay(AFTER_PRAISE_MS)
+                // Random, never the same number twice running.
+                number = nextCount(number)
             }
 
             false -> {
                 sounds.play("oops_${Random.nextInt(1, 3)}")
-                delay(700)
+                delay(AFTER_OOPS_MS)
                 // Tell her the answer, then ask the same number again.
                 sounds.play("num_$number")
-                delay(900)
+                delay(AFTER_NUM_MS)
                 asking += 1
             }
 
@@ -108,7 +113,7 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            BigNumber(number = number, height = shorter * 0.46f)
+            BigNumber(number = number, height = shorter * 0.70f)
 
             Row(
                 Modifier.fillMaxWidth(),
@@ -117,14 +122,14 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
                 JudgeButton(
                     color = Color(0xFF3BA55C),
                     mark = Mark.Tick,
-                    size = shorter * 0.30f,
+                    size = shorter * 0.26f,
                     enabled = reaction == null,
                     onClick = { reaction = true },
                 )
                 JudgeButton(
                     color = Color(0xFFC94A4A),
                     mark = Mark.Cross,
-                    size = shorter * 0.30f,
+                    size = shorter * 0.26f,
                     enabled = reaction == null,
                     onClick = { reaction = false },
                 )

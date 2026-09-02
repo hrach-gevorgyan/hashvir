@@ -6,6 +6,7 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -73,6 +74,7 @@ fun RecognitionScreen(
 ) {
     var solvedAt by remember(round) { mutableStateOf<Offset?>(null) }
     var wrongAt by remember(round) { mutableStateOf(0) }
+    var ruledOut by remember(round) { mutableStateOf(emptySet<Int>()) }
 
     LaunchedEffect(round) {
         delay(200)
@@ -123,8 +125,10 @@ fun RecognitionScreen(
                             glyphHeight = cardHeight * 0.44f,
                             shakeDistance = shakePx,
                             onCorrect = { solvedAt = centre },
+                            ruledOut = choice in ruledOut,
                             onWrong = {
                                 sounds.play("oops_${Random.nextInt(1, 3)}")
+                                ruledOut = ruledOut + choice
                                 wrongAt += 1
                             },
                             modifier = Modifier
@@ -144,7 +148,7 @@ fun RecognitionScreen(
                 wrongAt > 0 -> HelperState.Sad
                 else -> HelperState.Thinking
             },
-            size = maxHeight * 0.15f,
+            size = maxHeight * 0.20f,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(12.dp),
@@ -164,6 +168,7 @@ private fun ChoiceCard(
     choice: Int,
     correct: Boolean,
     solved: Boolean,
+    ruledOut: Boolean,
     glyphHeight: Dp,
     shakeDistance: Float,
     onCorrect: () -> Unit,
@@ -190,7 +195,21 @@ private fun ChoiceCard(
             .background(BackgroundTint.Paper.color)
             .background(Feedback.Neutral.copy(alpha = 0.28f * wrongTint.value))
             .background(
-                if (solved && correct) Feedback.Positive.copy(alpha = 0.18f) else Color.Transparent
+                when {
+                    solved && correct -> Feedback.Positive.copy(alpha = 0.22f)
+                    // Wrong cards stay marked, so she can see what is already ruled out.
+                    ruledOut -> Feedback.Wrong.copy(alpha = 0.22f)
+                    else -> Color.Transparent
+                }
+            )
+            .border(
+                width = if ((solved && correct) || ruledOut) 5.dp else 0.dp,
+                color = when {
+                    solved && correct -> Feedback.Positive
+                    ruledOut -> Feedback.Wrong
+                    else -> Color.Transparent
+                },
+                shape = RoundedCornerShape(26.dp),
             )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -209,14 +228,14 @@ private fun ChoiceCard(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = choice.toString(),
-                color = Ink.Primary,
+                color = if (ruledOut) Ink.Primary.copy(alpha = 0.45f) else Ink.Primary,
                 fontFamily = Armenian,
                 fontWeight = FontWeight.Black,
                 fontSize = glyphHeight.value.sp,
             )
             Text(
                 text = numberWord(choice),
-                color = Ink.Primary,
+                color = if (ruledOut) Ink.Primary.copy(alpha = 0.45f) else Ink.Primary,
                 fontFamily = Armenian,
                 fontWeight = FontWeight.Black,
                 fontSize = (glyphHeight.value * 0.26f).sp,

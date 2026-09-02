@@ -26,10 +26,14 @@ import kotlinx.coroutines.delay
 
 /** Beat between the last tap and the numeral, so the count lands before the answer does. */
 private const val GLYPH_DELAY_MS = 400L
-private const val CHIME_DELAY_MS = 600L
 
-/** Long enough to look at the numeral, short enough that she does not go looking elsewhere. */
-private const val NEXT_ROUND_DELAY_MS = 1500L
+/**
+ * Round-end audio runs strictly one clip at a time. Measured lengths: total up to 1.50s,
+ * praise up to 1.04s, chime 1.10s. Three of them 600ms apart played as a pile-up.
+ */
+private const val AFTER_TOTAL_MS = 1700L
+private const val AFTER_PRAISE_MS = 1250L
+private const val AFTER_CHIME_MS = 1250L
 
 @Composable
 fun CountingScreen(
@@ -51,10 +55,11 @@ fun CountingScreen(
         delay(GLYPH_DELAY_MS)
         showGlyph = true
         sounds.play("total_${round.count}")
-        delay(CHIME_DELAY_MS)
-        sounds.play("chime")
+        delay(AFTER_TOTAL_MS)
         sounds.play("praise_${kotlin.random.Random.nextInt(1, 5)}")
-        delay(NEXT_ROUND_DELAY_MS)
+        delay(AFTER_PRAISE_MS)
+        sounds.play("chime")
+        delay(AFTER_CHIME_MS)
         onRoundFinished()
     }
 

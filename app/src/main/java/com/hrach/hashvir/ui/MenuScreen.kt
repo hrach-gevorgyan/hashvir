@@ -147,28 +147,81 @@ private fun ModeIcon(mode: Mode, size: Dp) {
                 drawFruit(Fruit.Apple, box * 0.62f, Offset(box * 0.19f, 0f))
             }
 
-            // A numeral reads at this size where a symbol would not.
-            Mode.Guess -> NumeralBadge("3", Color(0xFF2D7FC1), size)
-            Mode.Learn -> NumeralBadge("5", Color(0xFF3BA55C), size)
+            // Four cards with one picked out — the shape of the Գուշակել screen itself.
+            Mode.Guess -> ChoiceGrid(size)
+
+            // One number being spoken: the numeral with a speech bubble.
+            Mode.Learn -> SpokenNumber(size)
         }
     }
 }
 
+/** A miniature of the four-card grid, with the chosen one lifted and green. */
 @Composable
-private fun NumeralBadge(numeral: String, color: Color, size: Dp) {
-    Box(
-        Modifier
-            .size(size * 0.86f)
-            .clip(RoundedCornerShape(percent = 50))
-            .background(color),
-        contentAlignment = Alignment.Center,
+private fun ChoiceGrid(size: Dp) {
+    val cell = size * 0.42f
+    Column(
+        Modifier.size(size),
+        verticalArrangement = Arrangement.spacedBy(size * 0.08f, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        for (row in listOf(listOf("2", "7"), listOf("4", "9"))) {
+            Row(horizontalArrangement = Arrangement.spacedBy(size * 0.08f)) {
+                for (numeral in row) {
+                    val picked = numeral == "7"
+                    Box(
+                        Modifier
+                            .size(cell)
+                            .clip(RoundedCornerShape(percent = 26))
+                            .background(if (picked) Color(0xFF3BA55C) else Color(0xFFFFFFFF)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = numeral,
+                            color = if (picked) Color.White else Ink.Primary,
+                            fontFamily = Armenian,
+                            fontWeight = FontWeight.Black,
+                            fontSize = (cell.value * 0.62f).sp,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** A numeral with a speech bubble: this is the mode where she says it out loud. */
+@Composable
+private fun SpokenNumber(size: Dp) {
+    Box(Modifier.size(size), contentAlignment = Alignment.Center) {
         Text(
-            text = numeral,
-            color = Color.White,
+            text = "5",
+            color = Color(0xFF7B3FA0),
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
-            fontSize = (size.value * 0.5f).sp,
+            fontSize = (size.value * 0.78f).sp,
         )
+        Box(
+            Modifier
+                .align(Alignment.TopEnd)
+                .size(size * 0.44f)
+                .clip(
+                    RoundedCornerShape(
+                        topStartPercent = 45,
+                        topEndPercent = 45,
+                        bottomEndPercent = 45,
+                        bottomStartPercent = 8,
+                    )
+                )
+                .background(Color(0xFF3BA55C)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "•••",
+                color = Color.White,
+                fontWeight = FontWeight.Black,
+                fontSize = (size.value * 0.15f).sp,
+            )
+        }
     }
 }

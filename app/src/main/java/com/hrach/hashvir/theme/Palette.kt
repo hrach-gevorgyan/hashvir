@@ -48,4 +48,7 @@ object Mouse {
 object Feedback {
     val Positive = Color(0xFF3BA55C)
     val Neutral = Color(0xFFC9A227)
+
+    /** Marks a ruled-out card. Muted rather than alarming — it is information, not a telling-off. */
+    val Wrong = Color(0xFFC94A4A)
 }

@@ -5,7 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -61,7 +64,13 @@ private fun App(compact: Boolean, game: GameViewModel = viewModel()) {
 
     BackHandler(enabled = screen != Screen.Menu) { toMenu() }
 
-    BoxWithConstraints(Modifier.fillMaxSize()) {
+    // Nothing is allowed under the status bar or the gesture bar: at high counts the fruit
+    // was reaching both edges, and the back button sat half under the clock.
+    BoxWithConstraints(
+        Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+    ) {
         when (val current = screen) {
             Screen.Intro -> IntroScreen(sounds = sounds, onDone = { screen = Screen.Menu })
 
