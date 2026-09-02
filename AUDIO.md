@@ -34,22 +34,21 @@ counting objects one by one.
 
 ## `total_1` … `total_10` — the total, announced at round end
 
-Same words, **a separate take**. This one is conclusive: falling intonation, slightly slower,
-a small pause before it. It should sound like "…and that makes four", not like another count.
-Also unprocessed.
+Recorded as «Ընդամենը՝ X» — conclusive, slightly slower, a small pause before the number, so it
+reads as a summing-up rather than another count. Unprocessed.
 
 | File | Says |
 |---|---|
-| `total_1` | մեկ |
-| `total_2` | երկու |
-| `total_3` | երեք |
-| `total_4` | չորս |
-| `total_5` | հինգ |
-| `total_6` | վեց |
-| `total_7` | յոթ |
-| `total_8` | ութ |
-| `total_9` | ինը |
-| `total_10` | տասը |
+| `total_1` | Ընդամենը՝ մեկ |
+| `total_2` | Ընդամենը՝ երկու |
+| `total_3` | Ընդամենը՝ երեք |
+| `total_4` | Ընդամենը՝ չորս |
+| `total_5` | Ընդամենը՝ հինգ |
+| `total_6` | Ընդամենը՝ վեց |
+| `total_7` | Ընդամենը՝ յոթ |
+| `total_8` | Ընդամենը՝ ութ |
+| `total_9` | Ընդամենը՝ ինը |
+| `total_10` | Ընդամենը՝ տասը |
 
 ## `ask_1` … `ask_10` — recognition mode prompt
 
@@ -99,11 +98,14 @@ retry immediately and should not feel it as a failure. Short, under ~600 ms.
 
 | File | Content |
 |---|---|
-| `chime` | Round complete. One warm, soft bell or marimba note. Plays 600 ms after the total. |
+| `chime` | Round complete. One warm, soft marimba note (G4). Plays 600 ms after the total. |
 | `star_1` | Ascending note 1 — lowest |
 | `star_2` | Ascending note 2 — middle |
 | `star_3` | Ascending note 3 — highest |
 
-The three star notes should be the same instrument, a pleasing interval apart (a major triad
-works), so tapping all three left-to-right sounds like a little rising phrase. Short, bright,
-no long tail.
+The three star notes are the same instrument a major triad apart (C5, E5, G5), so tapping all
+three left to right sounds like a little rising phrase.
+
+**These four are generated, not recorded** — `python tools/make_tones.py` writes them as WAV
+into `res/raw`. Resource names ignore the extension, so `chime.wav` is still `R.raw.chime`.
+Replace them with recorded OGGs any time; just delete the WAVs so there is no name clash.
