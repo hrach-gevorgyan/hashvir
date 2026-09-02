@@ -1,0 +1,57 @@
+# Changelog
+
+All notable changes to this project are documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
+project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+Nothing yet.
+
+## [0.2.0] — 2026-09-03
+
+First public release.
+
+### Added
+
+- **Three modes, chosen from a menu.** Հաշվել (count the fruit), Գուշակել (pick the number you
+  hear), Սովորել (say the number out loud while a grown-up marks it).
+- **Cardinality step in Հաշվել.** After the last tap the fruit gather into a single group,
+  Պույ-պույ asks «Քանի՞ հատ միրգ հաշվեցիր դու», and the child has three seconds of silence to
+  answer before the numeral confirms it. This is the difference between reciting a sequence and
+  understanding that the last number said is the answer.
+- **Պույ-պույ Ճստունի**, the mouse from the Armenian coconut tale, as the single voice and face
+  of the app. She breathes, blinks, walks, waves, thinks, hops when the answer is right, shakes
+  her head when it is not, gestures with either paw, and moves her jaw in time with every clip
+  she speaks.
+- **Tropical island setting** drawn from the tale: sun, clouds, a sea band, palms, shells, a
+  beach she chases a rolling coconut along on the menu.
+- **Six fruits** — apple, orange, banana, pear, strawberry, grapes — all Compose vector paths.
+- **43 Armenian audio clips**, one voice, normalised to −16 LUFS.
+- **Bundled Noto Sans Armenian** in Bold and Black, cut as static instances from the variable
+  font so numerals never fall back to a system font.
+- Confetti, three tappable stars with ascending notes, and four spoken praises on completion.
+- GitHub Actions workflow: tests on every push, a signed APK attached to each `v*` tag.
+
+### Design
+
+- **No failure states anywhere.** No score, no timer, no lives, no losing.
+- **No text on the child's screens** except the Armenian number words.
+- **Zero permissions** in the manifest, no network code, no analytics, no ad SDK, and no
+  dependencies beyond AndroidX and Compose.
+- **126dp minimum touch targets**, four times the usual adult minimum, with the computed size
+  logged in debug builds when a screen cannot hold it.
+- Colour contrast enforced by unit test: every fruit clears 4.5:1 against every background,
+  every ink clears 7:1.
+
+### Known limitations
+
+- On phones, counts of seven and above fall to roughly 13–14mm targets, below what is
+  comfortable for a three-year-old. A tablet fits them properly.
+- No parent controls yet: no volume, no mute, no way to restrict the range to 1–5, and no gate
+  in front of the back button.
+- Zero, subitising and comparing quantities are not covered.
+
+[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.0

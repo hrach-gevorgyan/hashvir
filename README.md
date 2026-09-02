@@ -17,6 +17,7 @@
 [![Tracking](https://img.shields.io/badge/tracking-none-3BA55C)](#-what-it-does-not-do)
 [![Offline](https://img.shields.io/badge/works-offline-3BA55C)](#-what-it-does-not-do)
 [![APK](https://img.shields.io/badge/apk-1.8%20MB-3BA55C)](#-build)
+[![License](https://img.shields.io/badge/license-MIT-2E2A28)](LICENSE)
 
 </div>
 
@@ -115,7 +116,7 @@ Dependencies are AndroidX and Compose, and nothing else.
 Grab the APK from [**Releases**](https://github.com/hrach-gevorgyan/hashvir/releases/latest) and
 install it on any device running **Android 7.0 or newer**.
 
-A tablet is recommended.
+A tablet is recommended. See [CHANGELOG.md](CHANGELOG.md) for what is in each version.
 
 ---
 
@@ -183,7 +184,8 @@ an unsigned APK.
 Built for one three-year-old, and shared in case it helps anyone else teaching a small child to
 count in Armenian.
 
-<sub>Noto Sans Armenian is used under the SIL Open Font License — see
+<sub>MIT licensed — see <a href="LICENSE">LICENSE</a>.<br>
+Noto Sans Armenian is used under the SIL Open Font License — see
 <a href="licenses/NotoSansArmenian-OFL.txt">licenses/</a>.</sub>
 
 </div>
