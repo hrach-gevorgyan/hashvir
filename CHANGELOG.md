@@ -9,9 +9,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [0.2.1] — 2026-09-03
+
+### Fixed
+
+- Release APKs are now signed. 0.2.0 was built before a signing key existed, so its APK could
+  not be installed at all — Android refuses an unsigned package outright.
+
 ## [0.2.0] — 2026-09-03
 
-First public release.
+First public release. The APK attached to this tag is unsigned and will not install; use
+0.2.1 or later.
 
 ### Added
 
@@ -53,5 +61,6 @@ First public release.
   in front of the back button.
 - Zero, subitising and comparing quantities are not covered.
 
-[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.1
 [0.2.0]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.0
