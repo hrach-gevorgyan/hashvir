@@ -81,17 +81,20 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
             }
 
             Mode.Order -> {
-                // Three to five is the useful range: long enough to be a sequence, short
-                // enough to hold in mind.
                 val count = nextCount(
                     (stage as? Stage.Ordering)?.round?.count,
-                    range = 3..5,
+                    range = 3..10,
                     random = random,
                 )
                 Stage.Ordering(
                     OrderRound(
                         count = count,
-                        positions = Layout.positions(count, width, height, compact, random),
+                        // Shuffled, and this matters: Layout hands back places in reading
+                        // order, so assigning them in turn would put 1 top-left and the rest
+                        // ascending across the screen. She could then finish the round by
+                        // reading left to right without knowing a single number.
+                        positions = Layout.positions(count, width, height, compact, random)
+                            .shuffled(random),
                         background = background,
                     )
                 )

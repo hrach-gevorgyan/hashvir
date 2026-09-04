@@ -12,23 +12,38 @@ import kotlin.random.Random
 class OrderRoundTest {
 
     @Test
-    fun `ordering counts stay in the three to five range and never repeat`() {
+    fun `ordering counts cover three to ten and never repeat`() {
         val random = Random(11)
         var previous: Int? = null
         val seen = mutableSetOf<Int>()
-        repeat(500) {
-            val count = nextCount(previous, range = 3..5, random = random)
-            assertTrue("count $count out of range", count in 3..5)
+        repeat(2000) {
+            val count = nextCount(previous, range = 3..10, random = random)
+            assertTrue("count $count out of range", count in 3..10)
             assertTrue("count $count repeated", count != previous)
             seen += count
             previous = count
         }
-        assertEquals(setOf(3, 4, 5), seen)
+        assertEquals((3..10).toSet(), seen)
+    }
+
+    /**
+     * Layout hands back places in reading order. If the round used them in that order the
+     * numbers would climb across the screen and she could finish without reading any of them.
+     */
+    @Test
+    fun `shuffling breaks the reading order that placement comes back in`() {
+        var sameAsPlacement = 0
+        for (seed in 0 until 200) {
+            val random = Random(seed)
+            val places = Layout.positions(5, 411.dp, Layout.playHeight(891.dp), true, random)
+            if (places.shuffled(random) == places) sameAsPlacement += 1
+        }
+        assertTrue("shuffle left the order untouched $sameAsPlacement times", sameAsPlacement < 10)
     }
 
     @Test
     fun `every number gets a distinct place that does not overlap another`() {
-        for (count in 3..5) {
+        for (count in 3..10) {
             for (seed in 0 until 40) {
                 val width = 411.dp
                 val height = Layout.playHeight(891.dp)

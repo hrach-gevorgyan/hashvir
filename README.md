@@ -77,7 +77,7 @@ number comes round again.
 ### 🔢 Հերթով
 **In order**
 
-Numbers scattered across the screen, tapped in sequence — 1, then 2, then 3.
+Three to ten numbers scattered across the screen, tapped in sequence — 1, then 2, then 3.
 
 Each one says its name and ticks off. After a wrong tap the number she is looking for starts
 pulsing, so she is never stuck.

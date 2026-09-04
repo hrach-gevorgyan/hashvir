@@ -53,7 +53,12 @@ fun choicesFor(answer: Int, random: Random = Random.Default): List<Int> {
  */
 data class OrderRound(
     val count: Int,
-    /** Position of each number, index 0 holding number 1. */
+    /**
+     * Position of each number, index 0 holding number 1.
+     *
+     * Shuffled by the caller. Placement comes back in reading order, and using it directly
+     * would lay the numbers out in sequence across the screen.
+     */
     val positions: List<Offset>,
     val background: BackgroundTint,
 )

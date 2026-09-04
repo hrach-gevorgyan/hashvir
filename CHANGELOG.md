@@ -7,13 +7,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+
+- Հերթով only ever went up to five, and the numbers were laid out in reading order — 1 top
+  left and the rest ascending across the screen — so the round could be finished left to right
+  without knowing a single number. Placement is now shuffled, and the range runs 3 to 10.
 
 ## [0.2.3] — 2026-09-03
 
 ### Added
 
-- **Հերթով, a fourth mode.** The numbers 3 to 5 of them appear scattered and she taps them in
+- **Հերթով, a fourth mode.** Three to ten numbers appear scattered and she taps them in
   order: 1, then 2, then 3. Each correct tap says the number aloud and ticks it off; a wrong one
   wobbles amber and costs nothing. After the first mistake the number she is looking for starts
   pulsing, so she is never stuck. This is ordinality — that numbers come in a fixed sequence and
