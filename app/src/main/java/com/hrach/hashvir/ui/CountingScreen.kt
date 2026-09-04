@@ -44,10 +44,11 @@ private const val GATHER_DELAY_MS = 1000L
  * last number herself as the answer to how many. The fruit stay on screen, gathered into one
  * group, for the whole of it.
  *
- * QUESTION_MS covers the clip; THINKING_MS is the silence after it, which is hers.
+ * QUESTION_MS covers the clip; THINKING_MS is the four seconds of silence after it, which
+ * are hers. Long enough to get the word out without being rushed.
  */
 private const val QUESTION_MS = 1950L
-private const val THINKING_MS = 3000L
+private const val THINKING_MS = 4000L
 
 /**
  * Round-end audio runs strictly one clip at a time. Measured after normalization: total up to
