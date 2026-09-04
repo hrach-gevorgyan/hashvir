@@ -51,8 +51,8 @@ import com.hrach.hashvir.theme.NumberColors
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-/** praise runs to 1.04s and oops to 0.85s; nothing here may overlap anything else. */
-private const val AFTER_PRAISE_MS = 1400L
+/** praise runs to 1.29s and oops to 0.76s; nothing here may overlap anything else. */
+private const val AFTER_PRAISE_MS = 1450L
 private const val AFTER_OOPS_MS = 1100L
 
 /**

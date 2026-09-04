@@ -19,7 +19,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Praise clips are now drawn from however many exist, up to twelve, and never the same one
   twice running. Dropping `praise_9.ogg` into `res/raw` is all it takes to add another —
-  there is no list to update and no code to change. Four are recorded so far.
+  there is no list to update and no code to change. Eight are recorded: Ապրե՛ս, Շատ լավ,
+  Կեցցե՛ս, Հրաշալի է, Ճի՛շտ է, Դու կարողացա՛ր, Ի՜նչ լավ ես անում, Այո՛, ճի՛շտ է.
 
 ### Fixed
 

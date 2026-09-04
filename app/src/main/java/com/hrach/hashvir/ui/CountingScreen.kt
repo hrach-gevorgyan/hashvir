@@ -51,10 +51,10 @@ private const val THINKING_MS = 3000L
 
 /**
  * Round-end audio runs strictly one clip at a time. Measured after normalization: total up to
- * 1.42s, praise 0.94s, chime 0.86s.
+ * 1.42s, praise 1.29s, chime 0.86s.
  */
 private const val AFTER_TOTAL_MS = 1650L
-private const val AFTER_PRAISE_MS = 1150L
+private const val AFTER_PRAISE_MS = 1450L
 private const val AFTER_CHIME_MS = 1100L
 
 private enum class Phase { Counting, Asking, Answered }

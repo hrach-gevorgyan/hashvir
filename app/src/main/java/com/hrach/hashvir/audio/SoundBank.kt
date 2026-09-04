@@ -108,7 +108,7 @@ class SoundBank(context: Context) {
         name == "how_many" -> 1900
         name.startsWith("total_") -> 1470
         name.startsWith("ask_") -> 1160
-        name.startsWith("praise_") -> 1000
+        name.startsWith("praise_") -> 1350
         name.startsWith("num_") -> 860
         name.startsWith("oops_") -> 810
         else -> 0

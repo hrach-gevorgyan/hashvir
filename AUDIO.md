@@ -1,4 +1,4 @@
-# Audio recording list — 43 clips
+# Audio recording list — 47 clips
 
 Drop finished files in `app/src/main/res/raw/`, then run `python tools/normalize_audio.py`,
 which trims the silence, converts to mono OGG and puts the whole set at -16 LUFS.
@@ -96,7 +96,7 @@ Recorded:
 | `praise_3` | Կեցցե՛ս |
 | `praise_4` | Հրաշալի է |
 
-Still to record — renumbered to follow straight on from the four above, so there are no gaps:
+Also recorded:
 
 | File | Says |
 |---|---|
