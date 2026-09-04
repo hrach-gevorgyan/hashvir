@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.3] — 2026-09-03
+
 ### Added
 
 - **Հերթով, a fourth mode.** The numbers 3 to 5 of them appear scattered and she taps them in
@@ -17,12 +21,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Four more praise clips: Ճի՛շտ է, Դու կարողացա՛ր, Ի՜նչ լավ ես անում, Այո՛, ճի՛շտ է. Eight now.
+- The pause for answering «Քանի՞ հատ միրգ հաշվեցիր դու» goes from three seconds to four.
 - Praise clips are now dealt from a shuffled deck: every other clip is heard before any one
   repeats, and a fresh deck never opens with the clip that closed the last. Independent random
   draws repeat far more than people expect. The same now applies to the two oops clips.
-- Praise is drawn from however many clips exist, up to twelve. Dropping `praise_9.ogg` into `res/raw` is all it takes to add another —
-  there is no list to update and no code to change. Eight are recorded: Ապրե՛ս, Շատ լավ,
-  Կեցցե՛ս, Հրաշալի է, Ճի՛շտ է, Դու կարողացա՛ր, Ի՜նչ լավ ես անում, Այո՛, ճի՛շտ է.
+- Praise is drawn from however many clips exist, up to twelve. Dropping `praise_9.ogg` into
+  `res/raw` is all it takes to add another: no list to update and no code to change.
 
 ### Fixed
 
@@ -109,7 +114,8 @@ First public release. The APK attached to this tag is unsigned and will not inst
   in front of the back button.
 - Zero, subitising and comparing quantities are not covered.
 
-[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.3
 [0.2.2]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.2
 [0.2.1]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.1
 [0.2.0]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.0
