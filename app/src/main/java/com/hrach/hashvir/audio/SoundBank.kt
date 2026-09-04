@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.SystemClock
 import android.util.Log
+import java.util.concurrent.ConcurrentHashMap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,8 +42,13 @@ class SoundBank(context: Context) {
     /** Streams currently playing, so a long clip can be cut short when a screen is left. */
     private val playing = mutableListOf<Int>()
 
-    /** Sound ids SoundPool has finished decoding. Playing before this is silent. */
-    private val loaded = mutableSetOf<Int>()
+    /**
+     * Sound ids SoundPool has finished decoding. Playing before this is silent.
+     *
+     * Written from SoundPool's own callback thread and read from the main thread, so it has to
+     * be concurrent.
+     */
+    private val loaded: MutableSet<Int> = ConcurrentHashMap.newKeySet()
 
 
     init {
@@ -106,6 +112,15 @@ class SoundBank(context: Context) {
         name.startsWith("oops_") -> 810
         else -> 0
     }
+
+    /**
+     * True once [name] has finished decoding and will actually be audible.
+     *
+     * The intro is by far the longest clip and is asked for barely a moment after launch, so on
+     * a slower device it was still decoding and played silently. Callers with fixed timing
+     * should wait for this rather than assuming a clip is ready.
+     */
+    fun isReady(name: String): Boolean = sounds[name]?.let { it in loaded } == true
 
     /** Cuts off whatever is playing — skipping the intro has to stop the intro. */
     fun stopAll() {

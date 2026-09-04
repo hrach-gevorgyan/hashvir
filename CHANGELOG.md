@@ -7,6 +7,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.2] — 2026-09-03
+
+### Fixed
+
+- The intro greeting was silent on slower devices. It is the longest clip and is asked for
+  moments after launch, so SoundPool was often still decoding it and the play call no-opped —
+  Պույ-պույ waved through her introduction in silence. The intro screen now waits for the clip
+  to be ready, up to four seconds, before starting it and its timer.
+- The set of decoded clip ids was a plain `mutableSetOf` written from SoundPool's callback
+  thread and read from the main thread. It is now concurrent.
+
 ### Changed
 
 - Documentation brought in line with the app: CLAUDE.md now records the three rules that were
@@ -71,6 +84,7 @@ First public release. The APK attached to this tag is unsigned and will not inst
   in front of the back button.
 - Zero, subitising and comparing quantities are not covered.
 
-[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.2
 [0.2.1]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.1
 [0.2.0]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.0

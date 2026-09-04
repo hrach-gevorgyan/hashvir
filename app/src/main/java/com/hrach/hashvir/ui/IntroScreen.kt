@@ -33,6 +33,9 @@ import kotlinx.coroutines.delay
 /** Roughly the length of the greeting, plus a beat to look at her. */
 private const val INTRO_MS = 7600L
 
+/** How long to wait for the greeting to finish decoding before giving up on it. */
+private const val READY_TIMEOUT_MS = 4000L
+
 /**
  * Պույ-պույ waves and introduces herself.
  *
@@ -45,6 +48,16 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
 
     LaunchedEffect(Unit) {
         entrance.animateTo(1f, tween(400, easing = FastOutSlowInEasing))
+
+        // The greeting is the longest clip and the first thing asked for, so on a slower
+        // device it can still be decoding here. Waiting for it keeps her from waving in
+        // silence; if it never arrives the screen still moves on.
+        var waited = 0L
+        while (!sounds.isReady("intro") && waited < READY_TIMEOUT_MS) {
+            delay(50)
+            waited += 50
+        }
+
         sounds.play("intro")
         delay(INTRO_MS)
         sounds.stopAll()
