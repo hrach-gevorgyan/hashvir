@@ -53,7 +53,6 @@ import com.hrach.hashvir.theme.NumberColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 private const val SHAKE_DP = 8
 private const val SHAKE_MS = 200
@@ -128,7 +127,7 @@ fun OrderScreen(
                         }
 
                         else -> {
-                            sounds.play("oops_${Random.nextInt(1, 3)}")
+                            sounds.playOops()
                             wrongTaps += 1
                             lastWrongAt = System.nanoTime()
                         }

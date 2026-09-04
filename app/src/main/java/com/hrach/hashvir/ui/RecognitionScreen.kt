@@ -54,7 +54,6 @@ import com.hrach.hashvir.theme.Ink
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 private const val CARD_GAP_DP = 12
 private const val SHAKE_DP = 8
@@ -134,7 +133,7 @@ fun RecognitionScreen(
                             onCorrect = { solvedAt = centre },
                             ruledOut = choice in ruledOut,
                             onWrong = {
-                                sounds.play("oops_${Random.nextInt(1, 3)}")
+                                sounds.playOops()
                                 ruledOut = ruledOut + choice
                                 wrongAt += 1
                             },

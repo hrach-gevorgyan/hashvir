@@ -88,7 +88,7 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
             false -> {
                 // Just the soft "not yet" and a head shake. The number stays on screen and
                 // she gets another go; saying the answer for her would defeat the point.
-                sounds.play("oops_${Random.nextInt(1, 3)}")
+                sounds.playOops()
                 delay(AFTER_OOPS_MS)
                 asking += 1
             }

@@ -17,8 +17,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Praise clips are now drawn from however many exist, up to twelve, and never the same one
-  twice running. Dropping `praise_9.ogg` into `res/raw` is all it takes to add another —
+- Praise clips are now dealt from a shuffled deck: every other clip is heard before any one
+  repeats, and a fresh deck never opens with the clip that closed the last. Independent random
+  draws repeat far more than people expect. The same now applies to the two oops clips.
+- Praise is drawn from however many clips exist, up to twelve. Dropping `praise_9.ogg` into `res/raw` is all it takes to add another —
   there is no list to update and no code to change. Eight are recorded: Ապրե՛ս, Շատ լավ,
   Կեցցե՛ս, Հրաշալի է, Ճի՛շտ է, Դու կարողացա՛ր, Ի՜նչ լավ ես անում, Այո՛, ճի՛շտ է.
 

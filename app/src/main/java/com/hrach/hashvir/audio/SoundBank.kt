@@ -114,22 +114,39 @@ class SoundBank(context: Context) {
         else -> 0
     }
 
+    /** Praise, in shuffled order. */
+    fun playPraise() = playFromDeck("praise_")
+
+    /** The soft "not yet", alternating rather than landing on the same one repeatedly. */
+    fun playOops() = playFromDeck("oops_")
+
     /**
-     * Plays one of the praise clips that actually exist, never the same one twice running.
+     * Plays one clip of a group, dealing from a shuffled deck rather than drawing at random.
      *
-     * She hears these more than anything else after the numbers themselves, so repetition is
-     * what makes them wear out fastest.
+     * Independent random draws repeat far more than people expect: with eight clips the same
+     * one comes up twice running about one time in eight, and three times running often enough
+     * to be noticed within a session. A deck guarantees every other clip is heard before any
+     * one repeats, and a fresh deck never opens with the clip that closed the last.
      */
-    fun playPraise() {
-        val available = sounds.keys.filter { it.startsWith("praise_") && isReady(it) }
+    private fun playFromDeck(prefix: String) {
+        val available = sounds.keys.filter { it.startsWith(prefix) && isReady(it) }
         if (available.isEmpty()) return
-        val choices = available.filterNot { it == lastPraise }.ifEmpty { available }
-        val pick = choices.random()
-        lastPraise = pick
+
+        val deck = decks.getOrPut(prefix) { mutableListOf() }
+        if (deck.isEmpty()) {
+            deck += available.shuffled()
+            if (deck.size > 1 && deck.first() == lastOfGroup[prefix]) {
+                deck += deck.removeAt(0)
+            }
+        }
+
+        val pick = deck.removeAt(0)
+        lastOfGroup[prefix] = pick
         play(pick)
     }
 
-    private var lastPraise: String? = null
+    private val decks = mutableMapOf<String, MutableList<String>>()
+    private val lastOfGroup = mutableMapOf<String, String>()
 
     /**
      * True once [name] has finished decoding and will actually be audible.
