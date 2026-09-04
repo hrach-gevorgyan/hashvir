@@ -96,22 +96,18 @@ Recorded:
 | `praise_3` | Կեցցե՛ս |
 | `praise_4` | Հրաշալի է |
 
-Suggestions for the rest — **check these read naturally to you before recording**, and swap in
-whatever you would actually say to her:
+Still to record — renumbered to follow straight on from the four above, so there are no gaps:
 
-| File | Suggestion |
+| File | Says |
 |---|---|
 | `praise_5` | Ճի՛շտ է |
-| `praise_6` | Ապրե՛ս, ջա՛ն |
-| `praise_7` | Դու կարողացա՛ր |
-| `praise_8` | Այո՛, հենց այդպե՛ս |
-| `praise_9` | Շատ գեղեցի՛կ |
-| `praise_10` | Բռա՛վո |
-| `praise_11` | Ի՜նչ լավ ես անում |
-| `praise_12` | Այո՛, ճի՛շտ է |
+| `praise_6` | Դու կարողացա՛ր |
+| `praise_7` | Ի՜նչ լավ ես անում |
+| `praise_8` | Այո՛, ճի՛շտ է |
 
-A few said with a laugh, or a little quieter, would help more than another word — variety of
-delivery reads as more genuine than variety of vocabulary.
+Worth more than another phrase: record a few of these **with different delivery** — one
+laughing, one quieter, one more surprised. Eight phrases delivered identically will start to
+sound automatic to her faster than four phrases delivered eight different ways.
 
 ## `oops_1`, `oops_2` — after a wrong recognition tap
 
