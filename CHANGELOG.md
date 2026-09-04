@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.4] — 2026-09-03
+
 ### Fixed
 
 - Հերթով only ever went up to five, and the numbers were laid out in reading order — 1 top
@@ -118,7 +122,8 @@ First public release. The APK attached to this tag is unsigned and will not inst
   in front of the back button.
 - Zero, subitising and comparing quantities are not covered.
 
-[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.4
 [0.2.3]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.3
 [0.2.2]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.2
 [0.2.1]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.1
