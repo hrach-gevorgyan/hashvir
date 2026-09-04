@@ -79,7 +79,7 @@ fun LearnScreen(sounds: SoundBank, onBack: () -> Unit, modifier: Modifier = Modi
     LaunchedEffect(reaction) {
         when (reaction) {
             true -> {
-                sounds.play("praise_${Random.nextInt(1, 5)}")
+                sounds.playPraise()
                 delay(AFTER_PRAISE_MS)
                 // Random, never the same number twice running.
                 number = nextCount(number)

@@ -77,9 +77,17 @@ never a test.
 > end in ը, so the definite form is awkward written down. Say whichever sounds right out loud
 > and record that; you have the native ear here, I don't.
 
-## `praise_1` … `praise_4` — after a correct recognition tap
+## `praise_*` — after anything she gets right
 
-Delighted, brief. May be pitch-shifted upward.
+Delighted, brief, and **varied** — she hears these more than anything except the numbers
+themselves, so repetition is what wears them out first. The app plays a random one and never
+the same twice running.
+
+**Up to twelve are supported, and only the ones that exist are ever used.** Recording another
+is a matter of dropping `praise_9.ogg` into `res/raw` and re-running the normalizer. No code
+change, nothing to register.
+
+Recorded:
 
 | File | Says |
 |---|---|
@@ -87,6 +95,23 @@ Delighted, brief. May be pitch-shifted upward.
 | `praise_2` | Շատ լավ |
 | `praise_3` | Կեցցե՛ս |
 | `praise_4` | Հրաշալի է |
+
+Suggestions for the rest — **check these read naturally to you before recording**, and swap in
+whatever you would actually say to her:
+
+| File | Suggestion |
+|---|---|
+| `praise_5` | Ճի՛շտ է |
+| `praise_6` | Ապրե՛ս, ջա՛ն |
+| `praise_7` | Դու կարողացա՛ր |
+| `praise_8` | Այո՛, հենց այդպե՛ս |
+| `praise_9` | Շատ գեղեցի՛կ |
+| `praise_10` | Բռա՛վո |
+| `praise_11` | Ի՜նչ լավ ես անում |
+| `praise_12` | Այո՛, ճի՛շտ է |
+
+A few said with a laugh, or a little quieter, would help more than another word — variety of
+delivery reads as more genuine than variety of vocabulary.
 
 ## `oops_1`, `oops_2` — after a wrong recognition tap
 

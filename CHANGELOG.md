@@ -15,6 +15,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   pulsing, so she is never stuck. This is ordinality — that numbers come in a fixed sequence and
   each has a place in it — where Հաշվել teaches cardinality. Uses no new audio.
 
+### Changed
+
+- Praise clips are now drawn from however many exist, up to twelve, and never the same one
+  twice running. Dropping `praise_9.ogg` into `res/raw` is all it takes to add another —
+  there is no list to update and no code to change. Four are recorded so far.
+
 ### Fixed
 
 - Fruit could sit behind Պույ-պույ on a tablet. She is drawn over the play area, but the

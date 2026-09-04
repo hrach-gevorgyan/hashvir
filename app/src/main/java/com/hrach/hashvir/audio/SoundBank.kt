@@ -60,7 +60,8 @@ class SoundBank(context: Context) {
             @Suppress("DiscouragedApi")
             val resId = resources.getIdentifier(name, "raw", context.packageName)
             if (resId == 0) {
-                Log.w(TAG, "missing clip: $name")
+                // Praise slots are meant to be optional; anything else missing is a mistake.
+                if (!name.startsWith("praise_")) Log.w(TAG, "missing clip: $name")
                 continue
             }
             sounds[name] = soundPool.load(context, resId, 1)
@@ -114,6 +115,23 @@ class SoundBank(context: Context) {
     }
 
     /**
+     * Plays one of the praise clips that actually exist, never the same one twice running.
+     *
+     * She hears these more than anything else after the numbers themselves, so repetition is
+     * what makes them wear out fastest.
+     */
+    fun playPraise() {
+        val available = sounds.keys.filter { it.startsWith("praise_") && isReady(it) }
+        if (available.isEmpty()) return
+        val choices = available.filterNot { it == lastPraise }.ifEmpty { available }
+        val pick = choices.random()
+        lastPraise = pick
+        play(pick)
+    }
+
+    private var lastPraise: String? = null
+
+    /**
      * True once [name] has finished decoding and will actually be audible.
      *
      * The intro is by far the longest clip and is asked for barely a moment after launch, so on
@@ -136,12 +154,19 @@ class SoundBank(context: Context) {
     }
 
     companion object {
+        /**
+         * How many praise clips the app will look for. Only the ones that exist are ever
+         * played, so recording another one is a matter of dropping praise_9.ogg into res/raw
+         * — no code change, no list to update.
+         */
+        const val PRAISE_SLOTS = 12
+
         /** Every clip the game can ask for. See AUDIO.md. */
         val ALL: List<String> = buildList {
             for (n in 1..10) add("num_$n")
             for (n in 1..10) add("total_$n")
             for (n in 1..10) add("ask_$n")
-            for (n in 1..4) add("praise_$n")
+            for (n in 1..PRAISE_SLOTS) add("praise_$n")
             add("oops_1")
             add("oops_2")
             add("chime")

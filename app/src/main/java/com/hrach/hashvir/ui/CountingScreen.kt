@@ -87,7 +87,7 @@ fun CountingScreen(
         phase = Phase.Answered
         sounds.play("total_${round.count}")
         delay(AFTER_TOTAL_MS)
-        sounds.play("praise_${Random.nextInt(1, 5)}")
+        sounds.playPraise()
         delay(AFTER_PRAISE_MS)
         sounds.play("chime")
         delay(AFTER_CHIME_MS)

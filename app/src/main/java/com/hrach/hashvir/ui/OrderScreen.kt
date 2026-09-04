@@ -90,7 +90,7 @@ fun OrderScreen(
     LaunchedEffect(complete) {
         if (!complete) return@LaunchedEffect
         delay(AFTER_LAST_MS)
-        sounds.play("praise_${Random.nextInt(1, 5)}")
+        sounds.playPraise()
         delay(AFTER_PRAISE_MS)
         sounds.play("chime")
         delay(AFTER_CHIME_MS)

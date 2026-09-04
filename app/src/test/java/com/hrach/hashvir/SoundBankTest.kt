@@ -9,7 +9,8 @@ class SoundBankTest {
 
     @Test
     fun `clip list matches the clips in AUDIO md`() {
-        assertEquals(43, SoundBank.ALL.size)
+        // 10 num, 10 total, 10 ask, PRAISE_SLOTS praise, 2 oops, chime, 3 star, 3 spoken prompts.
+        assertEquals(39 + SoundBank.PRAISE_SLOTS, SoundBank.ALL.size)
         assertEquals(SoundBank.ALL.size, SoundBank.ALL.toSet().size)
     }
 

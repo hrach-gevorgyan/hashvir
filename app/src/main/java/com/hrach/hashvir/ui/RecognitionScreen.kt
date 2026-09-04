@@ -86,7 +86,7 @@ fun RecognitionScreen(
 
     LaunchedEffect(solvedAt) {
         if (solvedAt == null) return@LaunchedEffect
-        sounds.play("praise_${Random.nextInt(1, 5)}")
+        sounds.playPraise()
         delay(PRAISE_TO_NEXT_MS)
         onRoundFinished()
     }
