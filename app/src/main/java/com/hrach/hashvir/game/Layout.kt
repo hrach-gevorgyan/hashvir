@@ -25,6 +25,18 @@ object Layout {
     /** Gap between adjacent objects, as a fraction of diameter. Crowding defeats big targets. */
     const val SpacingRatio = 0.25f
 
+    /**
+     * The strip along the bottom that Պույ-պույ stands in, as a fraction of screen height.
+     *
+     * Fruit are never placed in it. She is drawn over the play area, and on a wide screen the
+     * rows reach far enough down that fruit ended up behind her; a tall phone hid the problem
+     * because the same rows sit higher up.
+     */
+    private const val HelperBand = 0.19f
+
+    /** The area fruit may actually occupy: everything above Պույ-պույ. */
+    fun playHeight(height: Dp): Dp = height * (1f - HelperBand)
+
     /** Centre-to-centre distance for touching-but-not-crowded objects. */
     private fun pitch(diameter: Dp): Dp = diameter * (1f + SpacingRatio)
 

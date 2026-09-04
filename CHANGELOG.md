@@ -7,7 +7,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+
+- Fruit could sit behind Պույ-պույ on a tablet. She is drawn over the play area, but the
+  layout treated the whole screen as available, so on a wide screen the rows reached into her
+  corner. `Layout.playHeight` now reserves the bottom strip she stands in, and rounds are both
+  generated and drawn against that smaller area. A tall phone hid it because the same rows sit
+  higher up.
+- The four cards in Գուշակել were sized against the full screen height for the same reason and
+  could reach her corner too.
 
 ## [0.2.2] — 2026-09-03
 

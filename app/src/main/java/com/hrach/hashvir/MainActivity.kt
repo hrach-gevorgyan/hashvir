@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hrach.hashvir.audio.SoundBank
 import com.hrach.hashvir.game.GameViewModel
+import com.hrach.hashvir.game.Layout
 import com.hrach.hashvir.game.Stage
 import com.hrach.hashvir.ui.CountingScreen
 import com.hrach.hashvir.ui.IntroScreen
@@ -80,8 +81,10 @@ private fun App(compact: Boolean, game: GameViewModel = viewModel()) {
             Screen.Menu -> MenuScreen(onPick = { screen = Screen.Playing(it) })
 
             is Screen.Playing -> {
-                game.ensureStage(current.mode, maxWidth, maxHeight, compact)
-                val finish = { game.onRoundFinished(current.mode, maxWidth, maxHeight, compact) }
+                game.ensureStage(current.mode, maxWidth, Layout.playHeight(maxHeight), compact)
+                val finish = {
+                    game.onRoundFinished(current.mode, maxWidth, Layout.playHeight(maxHeight), compact)
+                }
 
                 when (val stage = game.stage) {
                     is Stage.Counting -> CountingScreen(

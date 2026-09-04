@@ -101,7 +101,7 @@ fun RecognitionScreen(
         val screenHeight = maxHeight
         val gap = CARD_GAP_DP.dp
         val cardWidth = (maxWidth - gap * 3) / 2
-        val cardHeight = minOf(cardWidth, (screenHeight * 0.66f - gap) / 2)
+        val cardHeight = minOf(cardWidth, (screenHeight * 0.60f - gap) / 2)
         val shakePx = with(density) { SHAKE_DP.dp.toPx() }
 
         Scenery(seed = round.answer)
@@ -109,7 +109,8 @@ fun RecognitionScreen(
         Column(
             Modifier
                 .align(Alignment.Center)
-                .padding(horizontal = gap),
+                .padding(horizontal = gap, vertical = gap)
+                .padding(bottom = screenHeight * 0.08f),
             verticalArrangement = Arrangement.spacedBy(gap),
         ) {
             for (row in 0 until 2) {

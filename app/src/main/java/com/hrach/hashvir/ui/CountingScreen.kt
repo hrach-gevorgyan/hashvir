@@ -103,7 +103,9 @@ fun CountingScreen(
         val shorter = minOf(maxWidth, maxHeight)
         val screenWidth = maxWidth
         val screenHeight = maxHeight
-        val diameter = Layout.diameter(round.count, maxWidth, maxHeight, compact)
+        // Fruit live above Պույ-պույ, never behind her.
+        val playHeight = Layout.playHeight(maxHeight)
+        val diameter = Layout.diameter(round.count, maxWidth, playHeight, compact)
 
         if (BuildConfig.DEBUG && diameter < Layout.PhoneFloor) {
             Log.w(
@@ -119,8 +121,8 @@ fun CountingScreen(
         // Once counted, the fruit shrink and slide into one tidy group near the top: the set
         // she is being asked about, seen as a whole.
         val gatheredDiameter = diameter * 0.62f
-        val gathered = remember(round.count, screenWidth, screenHeight, gatheredDiameter) {
-            Layout.gathered(round.count, screenWidth, screenHeight, gatheredDiameter, centreY = 0.32f)
+        val gathered = remember(round.count, screenWidth, playHeight, gatheredDiameter) {
+            Layout.gathered(round.count, screenWidth, playHeight, gatheredDiameter, centreY = 0.30f)
         }
         val pull by animateFloatAsState(
             targetValue = if (phase == Phase.Counting) 0f else 1f,
@@ -150,7 +152,7 @@ fun CountingScreen(
                 },
                 modifier = Modifier.offset(
                     x = maxWidth * x - size / 2,
-                    y = maxHeight * y - size / 2,
+                    y = playHeight * y - size / 2,
                 ),
             )
         }
@@ -164,7 +166,7 @@ fun CountingScreen(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = screenHeight * 0.10f),
+                    .padding(bottom = screenHeight * 0.05f, start = shorter * 0.22f),
                 contentAlignment = Alignment.BottomCenter,
             ) {
                 Column(
