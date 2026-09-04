@@ -45,6 +45,19 @@ fun choicesFor(answer: Int, random: Random = Random.Default): List<Int> {
     return (nearby.take(3) + answer).shuffled(random)
 }
 
+/**
+ * Հերթով: the numbers 1..[count] scattered, to be tapped in order.
+ *
+ * Ordinality rather than cardinality — that numbers have a fixed sequence and each one has a
+ * place in it, not just a name.
+ */
+data class OrderRound(
+    val count: Int,
+    /** Position of each number, index 0 holding number 1. */
+    val positions: List<Offset>,
+    val background: BackgroundTint,
+)
+
 /** The written word shown beneath the numeral. Index 0 is unused. */
 private val NUMBER_WORDS = listOf(
     "",

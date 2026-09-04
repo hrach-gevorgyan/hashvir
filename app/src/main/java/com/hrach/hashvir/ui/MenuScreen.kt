@@ -42,6 +42,7 @@ import com.hrach.hashvir.theme.Armenian
 import com.hrach.hashvir.theme.BackgroundTint
 import com.hrach.hashvir.theme.Fruit
 import com.hrach.hashvir.theme.Ink
+import com.hrach.hashvir.theme.NumberColors
 import kotlinx.coroutines.launch
 
 enum class Mode(val label: String, val tint: Color) {
@@ -53,11 +54,14 @@ enum class Mode(val label: String, val tint: Color) {
 
     /** Սովորել — say the number out loud. */
     Learn("Սովորել", Color(0xFFD5EBC8)),
+
+    /** Հերթով — tap the numbers in order. */
+    Order("Հերթով", Color(0xFFEADDF3)),
 }
 
 /**
- * Three ways in. Every card is a full-width target with a picture and one Armenian word, so
- * an adult can read it and a child can learn to recognise the shape of each one.
+ * The ways in. Every card is a full-width target with a picture and one Armenian word, so an
+ * adult can read it and a child can learn to recognise the shape of each one.
  */
 @Composable
 fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
@@ -67,7 +71,7 @@ fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
             .background(BackgroundTint.Sand.color)
             .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
-        val cardHeight = maxOf((maxHeight - 260.dp) / 3f, 140.dp)
+        val cardHeight = maxOf((maxHeight - 250.dp) / Mode.entries.size, 104.dp)
 
         Scenery(seed = 11)
 
@@ -75,7 +79,7 @@ fun MenuScreen(onPick: (Mode) -> Unit, modifier: Modifier = Modifier) {
             Modifier
                 .fillMaxSize()
                 .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 96.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
         ) {
             for (mode in Mode.entries) {
                 MenuCard(mode = mode, height = cardHeight, onPick = onPick)
@@ -164,6 +168,9 @@ private fun ModeIcon(mode: Mode, size: Dp) {
 
             // One number being spoken: the numeral with a speech bubble.
             Mode.Learn -> SpokenNumber(size)
+
+            // 1 2 3 in a row: the sequence itself.
+            Mode.Order -> Sequence(size)
         }
     }
 }
@@ -197,6 +204,34 @@ private fun ChoiceGrid(size: Dp) {
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+/** Three numerals in a row, the first already ticked off. */
+@Composable
+private fun Sequence(size: Dp) {
+    Row(
+        Modifier.size(size),
+        horizontalArrangement = Arrangement.spacedBy(size * 0.06f, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        for (n in 1..3) {
+            Box(
+                Modifier
+                    .size(size * 0.28f)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(NumberColors[n].copy(alpha = if (n == 1) 0.40f else 1f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = n.toString(),
+                    color = Color.White,
+                    fontFamily = Armenian,
+                    fontWeight = FontWeight.Black,
+                    fontSize = (size.value * 0.15f).sp,
+                )
             }
         }
     }

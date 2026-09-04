@@ -47,15 +47,9 @@ import com.hrach.hashvir.game.numberWord
 import com.hrach.hashvir.theme.Armenian
 import com.hrach.hashvir.theme.BackgroundTint
 import com.hrach.hashvir.theme.Ink
+import com.hrach.hashvir.theme.NumberColors
 import kotlinx.coroutines.delay
 import kotlin.random.Random
-
-/** One saturated colour per number, so each one has its own identity to remember it by. */
-private val NUMBER_COLORS = listOf(
-    Color(0xFFE03131), Color(0xFFF5901E), Color(0xFFF2B705), Color(0xFF94C11F),
-    Color(0xFF3BA55C), Color(0xFF14A0A0), Color(0xFF2D7FC1), Color(0xFF5B5BD6),
-    Color(0xFF7B3FA0), Color(0xFFE4356E),
-)
 
 /** praise runs to 1.04s and oops to 0.85s; nothing here may overlap anything else. */
 private const val AFTER_PRAISE_MS = 1400L
@@ -191,7 +185,7 @@ private fun BigNumber(number: Int, height: Dp) {
     ) {
         Text(
             text = number.toString(),
-            color = NUMBER_COLORS[number - 1],
+            color = NumberColors[number],
             fontFamily = Armenian,
             fontWeight = FontWeight.Black,
             fontSize = height.value.sp,

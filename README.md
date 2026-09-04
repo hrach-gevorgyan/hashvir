@@ -33,7 +33,7 @@ from the greeting to the last number.
 
 ---
 
-## 🎮 Three ways to play
+## 🎮 Four ways to play
 
 <table>
 <tr>
@@ -68,6 +68,27 @@ A number fills the screen and Պույ-պույ asks what it is.
 
 The child says it aloud; the grown-up next to her taps ✓ or ✗. Wrong just means the same
 number comes round again.
+
+</td>
+</tr>
+<tr>
+<td width="33%" valign="top">
+
+### 🔢 Հերթով
+**In order**
+
+Numbers scattered across the screen, tapped in sequence — 1, then 2, then 3.
+
+Each one says its name and ticks off. After a wrong tap the number she is looking for starts
+pulsing, so she is never stuck.
+
+</td>
+<td colspan="2" valign="top">
+
+**Cardinality** is *how many there are* — what Հաշվել asks.
+**Ordinality** is *what comes next* — what Հերթով asks.
+
+They are different ideas and a child gets them at different times.
 
 </td>
 </tr>

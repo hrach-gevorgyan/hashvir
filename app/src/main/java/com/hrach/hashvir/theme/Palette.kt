@@ -53,6 +53,14 @@ enum class Fruit(val color: Color, val detail: Color) {
     }
 }
 
+/** One saturated colour per number, so each has an identity to remember it by. Index 0 unused. */
+val NumberColors = listOf(
+    Color(0xFF000000),
+    Color(0xFFE03131), Color(0xFFF5901E), Color(0xFFF2B705), Color(0xFF94C11F),
+    Color(0xFF3BA55C), Color(0xFF14A0A0), Color(0xFF2D7FC1), Color(0xFF5B5BD6),
+    Color(0xFF7B3FA0), Color(0xFFE4356E),
+)
+
 object Ink {
     val Primary = Color(0xFF2E2A28)
     val Soft = Color(0xFF6B6560)

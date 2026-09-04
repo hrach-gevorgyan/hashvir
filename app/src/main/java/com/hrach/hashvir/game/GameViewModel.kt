@@ -14,6 +14,8 @@ sealed interface Stage {
     data class Counting(val round: Round) : Stage
     data class Recognition(val round: RecognitionRound) : Stage
 
+    data class Ordering(val round: OrderRound) : Stage
+
     /** Սովորել keeps its own state inside the screen; the stage just selects it. */
     data object Learning : Stage
 }
@@ -51,6 +53,7 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
         val previousBackground = when (val current = stage) {
             is Stage.Counting -> current.round.background
             is Stage.Recognition -> current.round.background
+            is Stage.Ordering -> current.round.background
             else -> null
         }
         val background = nextBackground(previousBackground)
@@ -73,6 +76,23 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
                         } else {
                             background
                         },
+                    )
+                )
+            }
+
+            Mode.Order -> {
+                // Three to five is the useful range: long enough to be a sequence, short
+                // enough to hold in mind.
+                val count = nextCount(
+                    (stage as? Stage.Ordering)?.round?.count,
+                    range = 3..5,
+                    random = random,
+                )
+                Stage.Ordering(
+                    OrderRound(
+                        count = count,
+                        positions = Layout.positions(count, width, height, compact, random),
+                        background = background,
                     )
                 )
             }

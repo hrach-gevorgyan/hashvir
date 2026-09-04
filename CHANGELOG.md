@@ -7,6 +7,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Հերթով, a fourth mode.** The numbers 3 to 5 of them appear scattered and she taps them in
+  order: 1, then 2, then 3. Each correct tap says the number aloud and ticks it off; a wrong one
+  wobbles amber and costs nothing. After the first mistake the number she is looking for starts
+  pulsing, so she is never stuck. This is ordinality — that numbers come in a fixed sequence and
+  each has a place in it — where Հաշվել teaches cardinality. Uses no new audio.
+
 ### Fixed
 
 - Fruit could sit behind Պույ-պույ on a tablet. She is drawn over the play area, but the

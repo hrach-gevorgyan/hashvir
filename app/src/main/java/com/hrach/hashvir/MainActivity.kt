@@ -27,6 +27,7 @@ import com.hrach.hashvir.ui.CountingScreen
 import com.hrach.hashvir.ui.IntroScreen
 import com.hrach.hashvir.ui.LearnScreen
 import com.hrach.hashvir.ui.MenuScreen
+import com.hrach.hashvir.ui.OrderScreen
 import com.hrach.hashvir.ui.Mode
 import com.hrach.hashvir.ui.RecognitionScreen
 
@@ -99,6 +100,14 @@ private fun App(compact: Boolean, game: GameViewModel = viewModel()) {
                     is Stage.Recognition -> RecognitionScreen(
                         round = stage.round,
                         sounds = sounds,
+                        onRoundFinished = finish,
+                        onBack = toMenu,
+                    )
+
+                    is Stage.Ordering -> OrderScreen(
+                        round = stage.round,
+                        sounds = sounds,
+                        compact = compact,
                         onRoundFinished = finish,
                         onBack = toMenu,
                     )
