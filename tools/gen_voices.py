@@ -39,6 +39,7 @@ Engine notes, all verified rather than assumed:
 import argparse
 import asyncio
 import csv
+import json
 import os
 import re
 import shutil
@@ -68,6 +69,11 @@ MOUSE_TEMPO = 0.9785           # 2.15% slower: 5% dragged, 3% of it given back
 # silence makes a tap feel laggy — and without it the end trim bites into the
 # last consonant, which is audible and awful on a word like "կոկոս".
 TAIL_PAD_S = 0.18
+
+TARGET_LUFS = -16.0
+TARGET_TP = -1.5
+# -1.5 dBFS as a linear amplitude, which is what alimiter takes.
+TP_LINEAR = 0.84
 
 VALID_KEY = re.compile(r"^[a-z][a-z0-9_]*$")
 
@@ -158,7 +164,7 @@ def _piper_voice():
 
 
 def to_ogg(src: Path, dst_ogg: Path, mouse: bool):
-    """Trim, make her a mouse, normalise loudness, pad the tail, encode."""
+    """Trim, make him a mouse, normalise loudness, pad the tail, encode."""
     chain = [
         # Leading silence only. This is the one that makes taps feel laggy.
         "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05",
@@ -179,21 +185,51 @@ def to_ogg(src: Path, dst_ogg: Path, mouse: bool):
             "highpass=f=150",                        # mud left over from a male source
             "equalizer=f=3000:t=q:w=1.4:g=2.5",      # consonants back
         ]
-    chain += [
-        "loudnorm=I=-16:TP=-1.5:LRA=11",
-        f"apad=pad_dur={TAIL_PAD_S}",
-    ]
+
+    pre = ",".join(chain)
+    measured = _measure_loudness(src, pre)
+
+    # Measure, then apply flat gain and limit the peaks.
+    #
+    # Single-pass loudnorm only estimates, and on clips this short it landed 3-7 LUFS low
+    # and inconsistently: "Ընդամենը՝ վեց" came out 7dB under "Ի՜նչ լավ ես անում", plainly
+    # audible between two clips that play seconds apart. Its two-pass linear mode refuses
+    # to run at all when a clip is short enough to measure an LRA of 0, which several of
+    # these are.
+    #
+    # Flat gain shifts integrated loudness by exactly that many dB, so the target is hit
+    # every time, and alimiter catches only the transients the gain pushes over. Both are
+    # static, which is what the rest of this chain requires.
+    gain = TARGET_LUFS - float(measured["input_i"])
+    norm = f"volume={gain:.2f}dB,alimiter=limit={TP_LINEAR}:level=disabled"
 
     subprocess.run(
         [
             "ffmpeg", "-y", "-loglevel", "error",
             "-i", str(src),
-            "-af", ",".join(chain),
+            "-af", f"{pre},{norm},apad=pad_dur={TAIL_PAD_S}",
             "-c:a", "libvorbis", "-q:a", "4", "-ar", "24000", "-ac", "1",
             str(dst_ogg),
         ],
         check=True,
     )
+
+
+def _measure_loudness(src: Path, pre: str) -> dict:
+    """First loudnorm pass: measure, and hand the numbers to the second."""
+    proc = subprocess.run(
+        [
+            "ffmpeg", "-hide_banner", "-i", str(src),
+            "-af", f"{pre},loudnorm=I={TARGET_LUFS}:TP={TARGET_TP}:LRA=11:print_format=json",
+            "-f", "null", "-",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    blob = proc.stderr[proc.stderr.rindex("{"):proc.stderr.rindex("}") + 1]
+    return json.loads(blob)
 
 
 def main():

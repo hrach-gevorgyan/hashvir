@@ -103,14 +103,14 @@ class SoundBank(context: Context) {
 
     /** Zero for the chime and the star notes: those are sounds, not speech. */
     private fun speechLengthMs(name: String): Long = when {
-        name == "intro" -> 6850
-        name == "what_number" -> 1250
-        name == "how_many" -> 1900
-        name.startsWith("total_") -> 1470
-        name.startsWith("ask_") -> 1160
-        name.startsWith("praise_") -> 1350
-        name.startsWith("num_") -> 860
-        name.startsWith("oops_") -> 810
+        name == "intro" -> 5700
+        name == "what_number" -> 950
+        name == "how_many" -> 1870
+        name.startsWith("total_") -> 1620
+        name.startsWith("ask_") -> 1240
+        name.startsWith("praise_") -> 1150
+        name.startsWith("num_") -> 620
+        name.startsWith("oops_") -> 480
         else -> 0
     }
 

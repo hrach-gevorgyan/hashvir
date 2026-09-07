@@ -58,7 +58,7 @@ import kotlin.math.roundToInt
 private const val CARD_GAP_DP = 12
 private const val SHAKE_DP = 8
 private const val SHAKE_MS = 200
-private const val PRAISE_TO_NEXT_MS = 1600L
+private const val PRAISE_TO_NEXT_MS = 1400L
 
 /**
  * Գուշակել — «Ո՞րն է X-ը». Four cards in a two-by-two grid, one of them right.

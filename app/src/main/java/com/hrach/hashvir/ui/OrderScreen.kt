@@ -57,7 +57,7 @@ import kotlin.math.roundToInt
 private const val SHAKE_DP = 8
 private const val SHAKE_MS = 200
 private const val AFTER_LAST_MS = 700L
-private const val AFTER_PRAISE_MS = 1450L
+private const val AFTER_PRAISE_MS = 1250L
 private const val AFTER_CHIME_MS = 1100L
 
 /** After this many wrong taps the next number starts pulsing, rather than leaving her stuck. */

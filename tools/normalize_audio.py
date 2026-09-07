@@ -14,8 +14,37 @@ import pyloudnorm as pyln
 import soundfile as sf
 
 TARGET_LUFS = -16.0
-PEAK_CEILING = 0.94
+# -1.5 dBFS. Lossy encoders overshoot the input peak by a few tenths of a dB, so a ceiling
+# any closer to full scale decodes above 1.0 and clips.
+PEAK_CEILING = 0.84
 RAW = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'app', 'src', 'main', 'res', 'raw')
+
+
+def _limit(audio, rate):
+    """Hold the peak under the ceiling without dragging the whole clip down.
+
+    Scaling the entire clip by ceiling/peak was the obvious thing and it undoes the loudness
+    match: synthetic speech has sharp transients, so one consonant sets the scale factor and
+    the whole word ends up several LU quiet. Instead only the moments that exceed the ceiling
+    are attenuated, on a smoothed envelope so the gain never steps.
+    """
+    peak = np.abs(audio).max()
+    if peak <= PEAK_CEILING:
+        return audio
+
+    # Required attenuation per sample, 1.0 wherever the signal is already under the ceiling.
+    need = np.minimum(1.0, PEAK_CEILING / np.maximum(np.abs(audio), 1e-9))
+
+    # Smooth it over ~4ms, and take a running minimum first so the gain is already down
+    # before the peak arrives rather than clamping on it.
+    window = max(3, int(rate * 0.004))
+    pad = np.pad(need, (window, window), mode="edge")
+    envelope = np.minimum.reduce([pad[i:i + len(need)] for i in range(2 * window)])
+    kernel = np.hanning(window * 2 + 1)
+    kernel /= kernel.sum()
+    envelope = np.convolve(envelope, kernel, mode="same")
+
+    return audio * envelope
 
 
 def normalize(path):
@@ -39,9 +68,7 @@ def normalize(path):
         if np.isfinite(loudness):
             mono = pyln.normalize.loudness(mono, loudness, TARGET_LUFS)
 
-    peak = np.abs(mono).max()
-    if peak > PEAK_CEILING:
-        mono = mono * (PEAK_CEILING / peak)
+    mono = _limit(mono, rate)
 
     out = os.path.splitext(path)[0] + '.ogg'
     sf.write(out, mono, rate, format='OGG', subtype='VORBIS')

@@ -1,4 +1,4 @@
-key,text
+# key,text — the spoken clips. Non-verbal ones (chime, star_*) are not generated.
 intro,"Բարև։ Ես Պույ-պույն եմ։ Ազգանունս Ճստունի։ Ես քեզ կօգնեմ սովորել թվերը։"
 num_1,"մեկ"
 num_2,"երկու"

@@ -18,8 +18,7 @@ class WordsCsvTest {
         val csv = File("../tools/words.csv")
         assertTrue("tools/words.csv not found at ${csv.absolutePath}", csv.exists())
         return csv.readLines()
-            .drop(1)
-            .filter { it.isNotBlank() }
+            .filter { it.isNotBlank() && !it.startsWith("#") }
             .map { it.substringBefore(',').trim() }
             .toSet()
     }

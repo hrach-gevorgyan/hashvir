@@ -3,7 +3,13 @@
 Drop finished files in `app/src/main/res/raw/`, then run `python tools/normalize_audio.py`,
 which trims the silence, converts to mono OGG and puts the whole set at -16 LUFS.
 
-All 43 spoken clips are recorded and in place, plus four non-verbal ones.
+All 43 spoken clips are **generated** by `tools/gen_voices.py` from `tools/words.csv`, plus
+four non-verbal ones. They are build inputs: generated once, committed, no network at runtime
+and no on-device TTS — Android has no Armenian voice, so runtime synthesis is not an option.
+
+The voice is Piper `hy_AM-gor-medium` (male, the only free keyless Armenian voice there is)
+put through a mouse shift: pitch and formants up 24.9%, tempo stretched back 2.15%, a highpass
+at 150Hz and a 2.5dB lift at 3kHz to put back the consonants the shift costs.
 
 `tools/words.csv` is the machine-readable version of this list, and
 `tools/gen_voices.py` turns it into OGG files — the same generator the puy-puy app uses, so
@@ -16,9 +22,10 @@ python tools/gen_voices.py        # piper, offline, no account needed
 python tools/gen_voices.py --engine azure   # hy-AM-AnahitNeural, warmer, needs a key
 ```
 
-Existing files are skipped, so this fills gaps rather than overwriting. **The recorded human
-voice is better than anything the generator produces** — pass `--force` only if you mean to
-lose a recording. `WordsCsvTest` fails if a clip the app plays has no line in the CSV.
+Existing files are skipped, so this fills gaps rather than overwriting. `WordsCsvTest` fails if a clip the app plays has no line in the CSV.
+
+Run `normalize_audio.py` after generating: `gen_voices.py` gets each clip close, and the
+normalizer is what actually lands them all on -16 LUFS.
  This list exists so the set can be re-recorded in
 another voice, or another language, without guessing at what each one says.
 

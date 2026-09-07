@@ -15,6 +15,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   system bars, so nothing else changed — but this still wants checking on a real device.
 - Lint now runs in CI, after the unit tests.
 
+- **All 43 spoken clips regenerated** with the Piper Armenian voice and the mouse pitch shift,
+  replacing the recorded ones. Timings retimed throughout: the synthetic clips are shorter,
+  the greeting by nearly a second.
 - Voice clips can now be generated rather than only recorded: `tools/words.csv` plus
   `tools/gen_voices.py`, taken from the puy-puy app so Պույ-պույ is one character across both.
   Piper offline by default, Azure `hy-AM-AnahitNeural` optionally. Generated clips are
@@ -82,6 +85,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   rather than describing a version that no longer exists.
 - README lists what is deliberately not built yet.
 
+- **All 43 spoken clips regenerated** with the Piper Armenian voice and the mouse pitch shift,
+  replacing the recorded ones. Timings retimed throughout: the synthetic clips are shorter,
+  the greeting by nearly a second.
 - Voice clips can now be generated rather than only recorded: `tools/words.csv` plus
   `tools/gen_voices.py`, taken from the puy-puy app so Պույ-պույ is one character across both.
   Piper offline by default, Azure `hy-AM-AnahitNeural` optionally. Generated clips are

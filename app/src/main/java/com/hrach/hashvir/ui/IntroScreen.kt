@@ -31,7 +31,7 @@ import com.hrach.hashvir.theme.BackgroundTint
 import kotlinx.coroutines.delay
 
 /** Roughly the length of the greeting, plus a beat to look at him. */
-private const val INTRO_MS = 7600L
+private const val INTRO_MS = 6300L
 
 /** How long to wait for the greeting to finish decoding before giving up on it. */
 private const val READY_TIMEOUT_MS = 4000L
