@@ -40,11 +40,11 @@ import kotlinx.coroutines.delay
  * Պույ-պույ Ճստունի.
  *
  * Built from real mouse parts — a pointed muzzle, whiskers, blushed cheeks, hands and feet,
- * a long curled tail — so she reads as a character rather than a stack of circles. Every part
- * is a separate layer, which is what lets her tilt, squash, point and shake independently.
+ * a long curled tail — so he reads as a character rather than a stack of circles. Every part
+ * is a separate layer, which is what lets him tilt, squash, point and shake independently.
  *
- * She is never still: breathing, blinking, and a tail that keeps swaying whatever else is
- * happening. She stays soft dove grey and never out-saturates the fruit.
+ * He is never still: breathing, blinking, and a tail that keeps swaying whatever else is
+ * happening. He stays soft dove grey and never out-saturates the fruit.
  */
 enum class HelperState {
     /** Between things: breathing, blinking, tail swaying, small head bob. */
@@ -62,7 +62,7 @@ enum class HelperState {
     /** Wrong answer: slow head shake, frown, ears drooping. Never harsh. */
     Sad,
 
-    /** Pointing at what she should look at, and looking there herself. */
+    /** Pointing at what she should look at, and looking there himself. */
     Suggesting,
 
     /** Strolling along the bottom of the screen, legs swinging. */
@@ -161,7 +161,7 @@ fun PouyPouy(
                 lean.animateTo(0f, tween(120))
                 smile.animateTo(1f, tween(150))
                 earLift.animateTo(1f, spring(stiffness = Spring.StiffnessLow))
-                // Both paws in the air when she is pleased.
+                // Both paws in the air when he is pleased.
                 leftArm.animateTo(1f, tween(150))
                 arm.animateTo(1f, tween(150))
                 eyesShut.animateTo(1f, tween(150))
@@ -231,7 +231,7 @@ fun PouyPouy(
         }
     }
 
-    // Every so often she gestures with one paw or the other, so a long stretch of listening
+    // Every so often he gestures with one paw or the other, so a long stretch of listening
     // never looks like a frozen picture.
     LaunchedEffect(state, speaking) {
         if (state != HelperState.Idle && !speaking) return@LaunchedEffect
@@ -247,7 +247,7 @@ fun PouyPouy(
         }
     }
 
-    // Hops ride on the squash curve, so the feet leave the ground exactly when she stretches.
+    // Hops ride on the squash curve, so the feet leave the ground exactly when he stretches.
     LaunchedEffect(state) {
         if (state == HelperState.Happy) {
             hop.animateTo(
@@ -276,7 +276,7 @@ fun PouyPouy(
         val breathe = 1f + 0.020f * sin(breath * 2f * Math.PI.toFloat())
         val autoBlink = blink > 0.965f
         val lidClose = maxOf(eyesShut.value, if (autoBlink) 1f else 0f)
-        // While she is talking the jaw moves and the whole head nods very slightly.
+        // While he is talking the jaw moves and the whole head nods very slightly.
         val mouthOpen = if (speaking) (0.35f + 0.65f * abs(sin(talk * Math.PI.toFloat()))) else 0f
         val walking = state == HelperState.Walking
         val walkPhase = if (walking) step else 0f
@@ -310,8 +310,8 @@ fun PouyPouy(
                         walkPhase = walkPhase,
                         mouthOpen = mouthOpen,
                         leftArm = leftArm.value,
-                        // Talking lifts the corners of her mouth further: she sounds pleased,
-                        // so she should look it.
+                        // Talking lifts the corners of his mouth further: he sounds pleased,
+                        // so he should look it.
                         extraSmile = if (speaking) 0.25f else 0f,
                     )
                 }
@@ -353,7 +353,7 @@ private fun DrawScope.drawMouse(
     }
     drawPath(tailPath, FurDark, style = Stroke(width = maxOf(2.dp.toPx(), s * 0.032f), cap = StrokeCap.Round))
 
-    // Feet, so she is standing on something rather than floating. While walking they swing
+    // Feet, so he is standing on something rather than floating. While walking they swing
     // in opposite phase and lift off the ground in turn.
     for ((index, side) in listOf(-1f, 1f).withIndex()) {
         val phase = walkPhase * 2f * Math.PI.toFloat() + index * Math.PI.toFloat()
@@ -390,7 +390,7 @@ private fun DrawScope.drawMouse(
         topLeft = Offset(cx - bodyW / 2f, ground - bodyH),
         size = Size(bodyW, bodyH),
     )
-    // Lighter belly, and a soft shadow where she meets the ground.
+    // Lighter belly, and a soft shadow where he meets the ground.
     drawOval(
         color = Color(0x4DFFFFFF),
         topLeft = Offset(cx - bodyW * 0.32f, ground - bodyH * 0.70f),
@@ -406,7 +406,7 @@ private fun DrawScope.drawMouse(
     val headY = s * 0.44f
     drawCircle(Fur, radius = headR, center = Offset(cx, headY))
 
-    // Muzzle: the piece that makes her a mouse and not a bear.
+    // Muzzle: the piece that makes him a mouse and not a bear.
     val muzzleY = headY + headR * 0.42f
     drawOval(
         color = Color(0x55FFFFFF),
@@ -436,7 +436,7 @@ private fun DrawScope.drawMouse(
     }
 
     // Brows: gentle arcs, always curving upward. Straight brows angled in toward the nose
-    // are the universal angry face, which is exactly what she must never look like.
+    // are the universal angry face, which is exactly what he must never look like.
     for (side in listOf(-1f, 1f)) {
         val bx = cx + side * headR * 0.40f
         // Worried when sad: both brows lift at the inner end. Never lowered.
@@ -456,7 +456,7 @@ private fun DrawScope.drawMouse(
     drawCircle(Color(0xFFE58A9A), radius = headR * 0.13f, center = Offset(cx, muzzleY - headR * 0.06f))
     drawCircle(Color(0x55FFFFFF), radius = headR * 0.045f, center = Offset(cx - headR * 0.04f, muzzleY - headR * 0.10f))
 
-    // Mouth: a curve from wide grin to small frown, or an open jaw while she is speaking.
+    // Mouth: a curve from wide grin to small frown, or an open jaw while he is speaking.
     val mouthY = muzzleY + headR * 0.20f
     val mouthW = headR * 0.30f
     if (mouthOpen > 0.01f) {

@@ -104,7 +104,7 @@ fun CountingScreen(
         val shorter = minOf(maxWidth, maxHeight)
         val screenWidth = maxWidth
         val screenHeight = maxHeight
-        // Fruit live above Պույ-պույ, never behind her.
+        // Fruit live above Պույ-պույ, never behind him.
         val playHeight = Layout.playHeight(maxHeight)
         val diameter = Layout.diameter(round.count, maxWidth, playHeight, compact)
 
@@ -182,7 +182,7 @@ fun CountingScreen(
 
         PouyPouy(
             state = when (phase) {
-                // She waits with the child while the answer is being worked out.
+                // He waits with the child while the answer is being worked out.
                 Phase.Asking -> HelperState.Thinking
                 Phase.Answered -> HelperState.Happy
                 Phase.Counting -> if (round.tapped.isEmpty()) HelperState.Idle else HelperState.Suggesting

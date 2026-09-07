@@ -61,6 +61,14 @@ android {
         jvmTarget = "17"
     }
 
+    lint {
+        // Lint crashes analysing the unit tests: "KaFirMemberFunctionSymbolPointer pointer
+        // already disposed", an internal fault in the Kotlin analysis API rather than a
+        // finding in this code. Test sources are out of scope anyway — the shipped app is
+        // what lint is here to check.
+        ignoreTestSources = true
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

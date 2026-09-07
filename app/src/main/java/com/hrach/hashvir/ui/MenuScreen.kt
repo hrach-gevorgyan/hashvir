@@ -49,7 +49,7 @@ enum class Mode(val label: String, val tint: Color) {
     /** Հաշվել — count the fruit. */
     Count("Հաշվել", Color(0xFFFFDCB8)),
 
-    /** Գուշակել — pick the number she names. */
+    /** Գուշակել — pick the number he names. */
     Guess("Գուշակել", Color(0xFFC9E9EC)),
 
     /** Սովորել — say the number out loud. */

@@ -63,7 +63,7 @@ private const val PRAISE_TO_NEXT_MS = 1600L
 /**
  * Գուշակել — «Ո՞րն է X-ը». Four cards in a two-by-two grid, one of them right.
  *
- * A wrong tap is not a failure: the card wobbles amber, Պույ-պույ shakes her head, and every
+ * A wrong tap is not a failure: the card wobbles amber, Պույ-պույ shakes his head, and every
  * card stays exactly where it is so she can try again. Nothing is scored, nothing disappears.
  */
 @Composable

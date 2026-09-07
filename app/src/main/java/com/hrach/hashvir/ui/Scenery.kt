@@ -38,8 +38,8 @@ import kotlin.random.Random
 /**
  * Պույ-պույ's island, drawn behind everything.
  *
- * From the tale: she finds a coconut, climbs inside, eats until she is too round to get back
- * out, and cries herself thin enough to escape. The whole app lives on that beach.
+ * From the tale: he finds a coconut, climbs inside, eats until he is too round to get back
+ * out, and cries himself thin enough to escape. The whole app lives on that beach.
  *
  * All of it is muted and motionless. Scenery is never the subject — the fruit and the numerals
  * stay the most saturated things on screen.
@@ -200,7 +200,7 @@ fun DrawScope.drawCoconut(diameter: Float, topLeft: Offset = Offset.Zero) {
     }
 }
 
-/** The beach she walks along: sand, a wet line, and a few tufts of grass. */
+/** The beach he walks along: sand, a wet line, and a few tufts of grass. */
 @Composable
 fun Beach(modifier: Modifier = Modifier) {
     Canvas(modifier.fillMaxWidth()) {
@@ -240,8 +240,8 @@ fun Beach(modifier: Modifier = Modifier) {
 /**
  * Պույ-պույ chasing the coconut along the beach — the moment the tale starts.
  *
- * The coconut rolls ahead of her and she never quite catches it. Both turn around together at
- * each end, so she is always running forwards.
+ * The coconut rolls ahead of him and he never quite catches it. Both turn around together at
+ * each end, so he is always running forwards.
  */
 @Composable
 fun CoconutChase(height: Dp, modifier: Modifier = Modifier) {

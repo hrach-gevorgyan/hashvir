@@ -30,6 +30,9 @@ jobs:
       - name: Unit tests
         run: ./gradlew testDebugUnitTest
 
+      - name: Lint
+        run: ./gradlew lint
+
       # Signing is optional. With the three secrets set, releases are signed; without them
       # the build still succeeds and produces an unsigned APK.
       - name: Restore signing key

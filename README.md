@@ -25,10 +25,10 @@
 
 ## 🥥 The story it lives in
 
-**Պույ-պույ Ճստունի** is a mouse from an Armenian children's tale. She finds a coconut, climbs
-inside, eats until she is too round to get back out, and cries herself thin enough to escape.
+**Պույ-պույ Ճստունի** is a mouse from an Armenian children's tale. He finds a coconut, climbs
+inside, eats until he is too round to get back out, and cries himself thin enough to escape.
 
-The whole app is set on her beach. Every word the child hears is hers — one voice, one face,
+The whole app is set on his beach. Every word the child hears is his — one voice, one face,
 from the greeting to the last number.
 
 ---

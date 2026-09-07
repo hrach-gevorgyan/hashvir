@@ -69,7 +69,7 @@ private const val HINT_AFTER_WRONG = 1
  * This is ordinality: that numbers come in a fixed sequence and each has a place in it, not
  * just a name. Cardinality answers "how many"; this answers "what comes next".
  *
- * A wrong tap costs nothing. The number wobbles amber, Պույ-պույ shakes her head, and after
+ * A wrong tap costs nothing. The number wobbles amber, Պույ-պույ shakes his head, and after
  * the first mistake the number she is looking for begins to pulse, so she is never stuck.
  */
 @Composable

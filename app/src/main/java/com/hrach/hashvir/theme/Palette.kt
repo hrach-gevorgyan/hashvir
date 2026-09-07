@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * The island Պույ-պույ lives on. Warm sand, shallow sea, palm shade — the world of the tale
- * where she climbs into a coconut, eats until she cannot get out, and cries herself thin again.
+ * where he climbs into a coconut, eats until he cannot get out, and cries himself thin again.
  */
 enum class BackgroundTint(val color: Color) {
     Sand(Color(0xFFFDF3E0)),

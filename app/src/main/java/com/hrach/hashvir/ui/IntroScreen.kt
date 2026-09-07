@@ -30,14 +30,14 @@ import com.hrach.hashvir.audio.rememberSpeaking
 import com.hrach.hashvir.theme.BackgroundTint
 import kotlinx.coroutines.delay
 
-/** Roughly the length of the greeting, plus a beat to look at her. */
+/** Roughly the length of the greeting, plus a beat to look at him. */
 private const val INTRO_MS = 7600L
 
 /** How long to wait for the greeting to finish decoding before giving up on it. */
 private const val READY_TIMEOUT_MS = 4000L
 
 /**
- * Պույ-պույ waves and introduces herself.
+ * Պույ-պույ waves and introduces himself.
  *
  * Tapping anywhere skips ahead — after the tenth time, waiting through the greeting is the
  * last thing anybody wants.
@@ -50,7 +50,7 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
         entrance.animateTo(1f, tween(400, easing = FastOutSlowInEasing))
 
         // The greeting is the longest clip and the first thing asked for, so on a slower
-        // device it can still be decoding here. Waiting for it keeps her from waving in
+        // device it can still be decoding here. Waiting for it keeps him from waving in
         // silence; if it never arrives the screen still moves on.
         var waited = 0L
         while (!sounds.isReady("intro") && waited < READY_TIMEOUT_MS) {
@@ -73,7 +73,7 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
             ) {
-                // Tapping through the greeting has to silence it, or she talks over the menu.
+                // Tapping through the greeting has to silence it, or he talks over the menu.
                 sounds.stopAll()
                 onDone()
             }
@@ -89,7 +89,7 @@ fun IntroScreen(sounds: SoundBank, onDone: () -> Unit, modifier: Modifier = Modi
                 .height(88.dp),
         )
 
-        // She is standing on the beach with the coconut she is about to chase.
+        // He is standing on the beach with the coconut he is about to chase.
         Box(
             Modifier
                 .align(Alignment.BottomCenter)

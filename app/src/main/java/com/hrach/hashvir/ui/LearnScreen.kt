@@ -60,7 +60,7 @@ private const val AFTER_OOPS_MS = 1100L
  * grown-up sitting next to her presses green or red.
  *
  * Green: she was right. Պույ-պույ hops, and the next number comes up.
- * Red: not yet. Պույ-պույ shakes her head, the number is spoken aloud, and it stays on screen
+ * Red: not yet. Պույ-պույ shakes his head, the number is spoken aloud, and it stays on screen
  * so she can try the same one again. Nothing is scored and nothing is taken away.
  */
 @Composable

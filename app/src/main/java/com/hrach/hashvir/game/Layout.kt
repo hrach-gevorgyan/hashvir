@@ -28,8 +28,8 @@ object Layout {
     /**
      * The strip along the bottom that Պույ-պույ stands in, as a fraction of screen height.
      *
-     * Fruit are never placed in it. She is drawn over the play area, and on a wide screen the
-     * rows reach far enough down that fruit ended up behind her; a tall phone hid the problem
+     * Fruit are never placed in it. He is drawn over the play area, and on a wide screen the
+     * rows reach far enough down that fruit ended up behind him; a tall phone hid the problem
      * because the same rows sit higher up.
      */
     private const val HelperBand = 0.19f

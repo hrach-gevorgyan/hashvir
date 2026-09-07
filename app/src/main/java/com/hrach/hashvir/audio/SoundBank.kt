@@ -72,7 +72,7 @@ class SoundBank(context: Context) {
     /**
      * When the current speech clip finishes, as device uptime.
      *
-     * Every word the child hears is Պույ-պույ's, so her mouth has to move while one is
+     * Every word the child hears is Պույ-պույ's, so his mouth has to move while one is
      * playing. SoundPool cannot report progress, so the length is taken from the measured
      * table below and the clock does the rest.
      */
