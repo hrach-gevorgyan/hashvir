@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.3.0] — 2026-09-08
+
 ### Changed
 
 - compileSdk and targetSdk to 36. Google Play requires it for new and updated apps as of
@@ -14,15 +18,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   its own content with `WindowInsets.safeDrawing` and the activity already draws behind the
   system bars, so nothing else changed — but this still wants checking on a real device.
 - Lint now runs in CI, after the unit tests.
-
 - **All 43 spoken clips regenerated** with the Piper Armenian voice and the mouse pitch shift,
   replacing the recorded ones. Timings retimed throughout: the synthetic clips are shorter,
   the greeting by nearly a second.
 - Voice clips can now be generated rather than only recorded: `tools/words.csv` plus
   `tools/gen_voices.py`, taken from the puy-puy app so Պույ-պույ is one character across both.
   Piper offline by default, Azure `hy-AM-AnahitNeural` optionally. Generated clips are
-  committed as build inputs; nothing is generated at runtime. Existing recordings are skipped,
-  not overwritten.
+  committed as build inputs; nothing is generated at runtime, which matters because Android
+  has no Armenian voice at all.
+- The loudness stage was rebuilt twice over to make the generated set usable. ffmpeg's
+  single-pass `loudnorm` only estimates and landed clips 3–7 LUFS apart; `normalize_audio.py`
+  then held peaks by scaling whole clips down, undoing the match again. Now: measure, flat
+  gain, and a limiter that touches only the moments over the ceiling. 46 of 47 clips sit
+  within 1dB of −16 LUFS, against a 7dB spread before.
+- Պույ-պույ is male. The English prose in the README and the code comments said otherwise.
+  No audio is affected: Armenian has no grammatical gender.
 
 ### Removed
 
@@ -91,8 +101,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Voice clips can now be generated rather than only recorded: `tools/words.csv` plus
   `tools/gen_voices.py`, taken from the puy-puy app so Պույ-պույ is one character across both.
   Piper offline by default, Azure `hy-AM-AnahitNeural` optionally. Generated clips are
-  committed as build inputs; nothing is generated at runtime. Existing recordings are skipped,
-  not overwritten.
+  committed as build inputs; nothing is generated at runtime, which matters because Android
+  has no Armenian voice at all.
+- The loudness stage was rebuilt twice over to make the generated set usable. ffmpeg's
+  single-pass `loudnorm` only estimates and landed clips 3–7 LUFS apart; `normalize_audio.py`
+  then held peaks by scaling whole clips down, undoing the match again. Now: measure, flat
+  gain, and a limiter that touches only the moments over the ceiling. 46 of 47 clips sit
+  within 1dB of −16 LUFS, against a 7dB spread before.
+- Պույ-պույ is male. The English prose in the README and the code comments said otherwise.
+  No audio is affected: Armenian has no grammatical gender.
 
 ### Removed
 
@@ -151,7 +168,8 @@ First public release. The APK attached to this tag is unsigned and will not inst
   in front of the back button.
 - Zero, subitising and comparing quantities are not covered.
 
-[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/hrach-gevorgyan/hashvir/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.3.0
 [0.2.4]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.4
 [0.2.3]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.3
 [0.2.2]: https://github.com/hrach-gevorgyan/hashvir/releases/tag/v0.2.2
