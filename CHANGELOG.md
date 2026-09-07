@@ -15,6 +15,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   system bars, so nothing else changed — but this still wants checking on a real device.
 - Lint now runs in CI, after the unit tests.
 
+- Voice clips can now be generated rather than only recorded: `tools/words.csv` plus
+  `tools/gen_voices.py`, taken from the puy-puy app so Պույ-պույ is one character across both.
+  Piper offline by default, Azure `hy-AM-AnahitNeural` optionally. Generated clips are
+  committed as build inputs; nothing is generated at runtime. Existing recordings are skipped,
+  not overwritten.
+
 ### Removed
 
 - `res/font/noto_sans_armenian.xml`. Nothing referenced it: `Type.kt` loads the two TTFs
@@ -75,6 +81,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   deliberately reversed (menu labels, red for ruled-out cards, a mouse that is always moving)
   rather than describing a version that no longer exists.
 - README lists what is deliberately not built yet.
+
+- Voice clips can now be generated rather than only recorded: `tools/words.csv` plus
+  `tools/gen_voices.py`, taken from the puy-puy app so Պույ-պույ is one character across both.
+  Piper offline by default, Azure `hy-AM-AnahitNeural` optionally. Generated clips are
+  committed as build inputs; nothing is generated at runtime. Existing recordings are skipped,
+  not overwritten.
 
 ### Removed
 

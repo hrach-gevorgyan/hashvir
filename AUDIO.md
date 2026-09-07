@@ -3,7 +3,23 @@
 Drop finished files in `app/src/main/res/raw/`, then run `python tools/normalize_audio.py`,
 which trims the silence, converts to mono OGG and puts the whole set at -16 LUFS.
 
-All 43 clips are recorded and in place. This list exists so the set can be re-recorded in
+All 43 spoken clips are recorded and in place, plus four non-verbal ones.
+
+`tools/words.csv` is the machine-readable version of this list, and
+`tools/gen_voices.py` turns it into OGG files — the same generator the puy-puy app uses, so
+Պույ-պույ sounds like one character across both. Clips are build *inputs*: they are generated
+once and committed, and the app builds and runs with no network.
+
+```bash
+tools/get_piper_voice.sh          # 63MB Armenian voice, not committed
+python tools/gen_voices.py        # piper, offline, no account needed
+python tools/gen_voices.py --engine azure   # hy-AM-AnahitNeural, warmer, needs a key
+```
+
+Existing files are skipped, so this fills gaps rather than overwriting. **The recorded human
+voice is better than anything the generator produces** — pass `--force` only if you mean to
+lose a recording. `WordsCsvTest` fails if a clip the app plays has no line in the CSV.
+ This list exists so the set can be re-recorded in
 another voice, or another language, without guessing at what each one says.
 
 **File requirements**
