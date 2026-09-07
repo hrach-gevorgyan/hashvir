@@ -7,7 +7,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- compileSdk and targetSdk to 36. Google Play requires it for new and updated apps as of
+  31 August 2026. API 36 enforces edge-to-edge with no opt-out; every screen already insets
+  its own content with `WindowInsets.safeDrawing` and the activity already draws behind the
+  system bars, so nothing else changed — but this still wants checking on a real device.
+- Lint now runs in CI, after the unit tests.
+
+### Removed
+
+- `res/font/noto_sans_armenian.xml`. Nothing referenced it: `Type.kt` loads the two TTFs
+  directly. It also carried six lint warnings for using API 26 attributes on minSdk 24.
 
 ## [0.2.4] — 2026-09-03
 

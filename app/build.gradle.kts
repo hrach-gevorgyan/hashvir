@@ -18,12 +18,12 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.hrach.hashvir"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.hrach.hashvir"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 6
         versionName = "0.2.4"
     }

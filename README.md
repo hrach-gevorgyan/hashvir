@@ -161,7 +161,7 @@ A tablet is recommended. See [CHANGELOG.md](CHANGELOG.md) for what is in each ve
 ./gradlew installDebug         # to a connected device
 ```
 
-Kotlin · Jetpack Compose · minSdk 24 · single Activity · no navigation library.
+Kotlin · Jetpack Compose · minSdk 24 · targetSdk 36 · single Activity · no navigation library.
 
 Every drawing in the app — the six fruits, Պույ-պույ, the palms, the coconut — is a Compose
 vector path. There is not one bitmap in the UI.
